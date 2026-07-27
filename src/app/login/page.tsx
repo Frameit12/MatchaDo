@@ -18,15 +18,15 @@ export default function LoginPage() {
 
         <form action={formAction} className="mt-6 flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Email
+            <label htmlFor="username" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Username
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
+              id="username"
+              name="username"
+              type="text"
               required
-              autoComplete="email"
+              autoComplete="username"
               className="rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-green-600 dark:border-zinc-700 dark:text-zinc-50"
             />
           </div>
