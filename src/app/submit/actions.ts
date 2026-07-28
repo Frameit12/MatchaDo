@@ -7,6 +7,7 @@ export type SubmitFormState = {
   error: string | null;
   fieldErrors: { brand_name?: string; product_name?: string };
   success: boolean;
+  productId: string | null;
 };
 
 export async function submitProduct(
@@ -35,7 +36,7 @@ export async function submitProduct(
   if (!product_name) fieldErrors.product_name = "Product name is required.";
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { error: null, fieldErrors, success: false };
+    return { error: null, fieldErrors, success: false, productId: null };
   }
 
   let photo_url: string | null = null;
@@ -51,6 +52,7 @@ export async function submitProduct(
         error: `Photo upload failed: ${uploadError.message}`,
         fieldErrors: {},
         success: false,
+        productId: null,
       };
     }
 
@@ -60,19 +62,23 @@ export async function submitProduct(
     photo_url = publicUrl;
   }
 
-  const { error: insertError } = await supabase.from("products").insert({
-    brand_name,
-    product_name,
-    grade,
-    origin,
-    photo_url,
-    status: "pending",
-    submitted_by: user.id,
-  });
+  const { data: inserted, error: insertError } = await supabase
+    .from("products")
+    .insert({
+      brand_name,
+      product_name,
+      grade,
+      origin,
+      photo_url,
+      status: "pending",
+      submitted_by: user.id,
+    })
+    .select("id")
+    .single();
 
   if (insertError) {
-    return { error: insertError.message, fieldErrors: {}, success: false };
+    return { error: insertError.message, fieldErrors: {}, success: false, productId: null };
   }
 
-  return { error: null, fieldErrors: {}, success: true };
+  return { error: null, fieldErrors: {}, success: true, productId: inserted.id };
 }

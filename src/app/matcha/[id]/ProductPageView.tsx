@@ -29,6 +29,7 @@ export type ProductPageViewProps = {
     grade: string | null;
     origin: string | null;
     photo_url: string | null;
+    status: string;
   };
   userEmail: string | null;
   onLogout: () => Promise<void>;
@@ -119,6 +120,11 @@ export default function ProductPageView({
               <span className="shrink-0 rounded-full bg-[oklch(0.32_0.06_150)] px-3.5 py-[5px] text-xs font-bold tracking-[0.06em] whitespace-nowrap text-[oklch(0.98_0.01_135)] uppercase">
                 {grade} Grade
               </span>
+              {product.status === "pending" && (
+                <span className="shrink-0 rounded-full bg-[oklch(0.85_0.13_80)] px-3.5 py-[5px] text-xs font-bold tracking-[0.06em] whitespace-nowrap text-[oklch(0.3_0.1_70)] uppercase">
+                  Pending Approval
+                </span>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-3.5 text-[15px] text-[oklch(0.45_0.03_150)]">
               <span>

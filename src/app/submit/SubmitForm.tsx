@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { submitProduct, type SubmitFormState } from "./actions";
 
-const initialState: SubmitFormState = { error: null, fieldErrors: {}, success: false };
+const initialState: SubmitFormState = { error: null, fieldErrors: {}, success: false, productId: null };
 
 export default function SubmitForm() {
   const [state, formAction, pending] = useActionState(submitProduct, initialState);
@@ -31,14 +32,25 @@ export default function SubmitForm() {
           Thank you!
         </h2>
         <p className="max-w-[380px] text-[15px] leading-[1.6] text-[oklch(0.45_0.03_150)]">
-          Your matcha has been submitted for review. We&apos;ll approve it shortly.
+          Your matcha has been submitted and is awaiting admin approval before it goes live for
+          everyone else. You can write the first review right away.
         </p>
-        <button
-          onClick={resetForm}
-          className="mt-2.5 rounded-[10px] border border-[oklch(0.8_0.03_145)] bg-white px-6 py-3 text-sm font-semibold text-[oklch(0.35_0.06_150)]"
-        >
-          Submit another
-        </button>
+        <div className="mt-2.5 flex items-center gap-3">
+          {state.productId && (
+            <Link
+              href={`/matcha/${state.productId}/review`}
+              className="rounded-[10px] bg-[oklch(0.4_0.09_150)] px-6 py-3 text-sm font-semibold text-[oklch(0.98_0.01_145)]"
+            >
+              Write the first review
+            </Link>
+          )}
+          <button
+            onClick={resetForm}
+            className="rounded-[10px] border border-[oklch(0.8_0.03_145)] bg-white px-6 py-3 text-sm font-semibold text-[oklch(0.35_0.06_150)]"
+          >
+            Submit another
+          </button>
+        </div>
       </div>
     );
   }
