@@ -19,6 +19,7 @@ type ReviewCardData = {
   descriptors: string[];
   whatILoved: string | null;
   couldBeBetter: string | null;
+  photoUrl: string | null;
   isMine: boolean;
 };
 
@@ -322,6 +323,15 @@ export default function ProductPageView({
                       </div>
                     )}
                   </div>
+
+                  {review.photoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={review.photoUrl}
+                      alt=""
+                      className="mt-4 h-28 w-28 rounded-xl object-cover"
+                    />
+                  )}
                 </div>
               ))}
             </div>

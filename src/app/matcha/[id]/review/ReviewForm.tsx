@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import StarRatingInput from "@/components/StarRatingInput";
+import { usePhotoDropzone } from "@/lib/usePhotoDropzone";
 import type { ReviewFormState } from "./actions";
 
 const initialState: ReviewFormState = { error: null, fieldErrors: {} };
@@ -57,6 +58,8 @@ export default function ReviewForm({
   const [whatILoved, setWhatILoved] = useState(initialReview?.whatILoved ?? "");
   const [couldBeBetter, setCouldBeBetter] = useState(initialReview?.couldBeBetter ?? "");
   const [photoName, setPhotoName] = useState("");
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const photoDrop = usePhotoDropzone(photoInputRef, setPhotoName);
 
   function toggle(list: string[], setList: (v: string[]) => void, value: string) {
     setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
@@ -204,7 +207,12 @@ export default function ReviewForm({
           </p>
           <label
             htmlFor="review-photo-input"
-            className="block cursor-pointer rounded-2xl border-2 border-dashed border-[oklch(0.78_0.04_140)] bg-[oklch(0.975_0.012_140)] p-1.5"
+            {...photoDrop.dropzoneProps}
+            className={`block cursor-pointer rounded-2xl border-2 p-1.5 ${
+              photoDrop.isDragging
+                ? "border-solid border-[oklch(0.4_0.09_150)] bg-[oklch(0.9_0.05_145)]"
+                : "border-dashed border-[oklch(0.78_0.04_140)] bg-[oklch(0.975_0.012_140)]"
+            }`}
           >
             <div className="flex h-[180px] w-full items-center justify-center rounded-xl bg-[oklch(0.97_0.008_140)] text-center text-sm text-[oklch(0.5_0.02_140)]">
               {photoName || "Drop a photo or click to upload"}
@@ -215,7 +223,8 @@ export default function ReviewForm({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setPhotoName(e.target.files?.[0]?.name ?? "")}
+              ref={photoInputRef}
+              onChange={photoDrop.onChange}
             />
           </label>
         </section>

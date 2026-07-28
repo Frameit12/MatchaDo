@@ -53,7 +53,7 @@ export default async function ProductPage({
   const { data: reviews } = await supabase
     .from("reviews")
     .select(
-      "id, user_id, color, aroma, taste, finish, value_for_money, overall, what_i_loved, could_be_better, created_at"
+      "id, user_id, color, aroma, taste, finish, value_for_money, overall, what_i_loved, could_be_better, photo_url, created_at"
     )
     .eq("product_id", id)
     .order("created_at", { ascending: false });
@@ -119,6 +119,7 @@ export default async function ProductPage({
           descriptors: descriptorsByReview.get(review.id) ?? [],
           whatILoved: review.what_i_loved,
           couldBeBetter: review.could_be_better,
+          photoUrl: review.photo_url,
           isMine: user ? review.user_id === user.id : false,
         }))}
       />

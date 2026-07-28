@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import StarRatingInput from "@/components/StarRatingInput";
+import { usePhotoDropzone } from "@/lib/usePhotoDropzone";
 import { submitProduct, checkDuplicateProduct, type SubmitFormState, type DuplicateMatch } from "./actions";
 
 const initialState: SubmitFormState = { error: null, fieldErrors: {}, success: false, productId: null };
@@ -47,6 +48,11 @@ export default function SubmitForm() {
   const [whatILoved, setWhatILoved] = useState("");
   const [couldBeBetter, setCouldBeBetter] = useState("");
   const [reviewPhotoName, setReviewPhotoName] = useState("");
+
+  const productPhotoInputRef = useRef<HTMLInputElement>(null);
+  const productPhotoDrop = usePhotoDropzone(productPhotoInputRef, setPhotoName);
+  const reviewPhotoInputRef = useRef<HTMLInputElement>(null);
+  const reviewPhotoDrop = usePhotoDropzone(reviewPhotoInputRef, setReviewPhotoName);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -247,7 +253,12 @@ export default function SubmitForm() {
           </label>
           <label
             htmlFor="photo-input"
-            className="flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border-[1.5px] border-dashed border-[oklch(0.68_0.06_150)] bg-[oklch(0.95_0.03_145)] p-[30px] text-center"
+            {...productPhotoDrop.dropzoneProps}
+            className={`flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border-[1.5px] p-[30px] text-center ${
+              productPhotoDrop.isDragging
+                ? "border-solid border-[oklch(0.45_0.09_150)] bg-[oklch(0.9_0.05_145)]"
+                : "border-dashed border-[oklch(0.68_0.06_150)] bg-[oklch(0.95_0.03_145)]"
+            }`}
           >
             {photoName ? (
               <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{photoName}</div>
@@ -268,7 +279,8 @@ export default function SubmitForm() {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setPhotoName(e.target.files?.[0]?.name ?? "")}
+              ref={productPhotoInputRef}
+              onChange={productPhotoDrop.onChange}
             />
           </label>
         </div>
@@ -413,7 +425,12 @@ export default function SubmitForm() {
           </label>
           <label
             htmlFor="review-photo-input"
-            className="flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border-[1.5px] border-dashed border-[oklch(0.68_0.06_150)] bg-[oklch(0.95_0.03_145)] p-[30px] text-center"
+            {...reviewPhotoDrop.dropzoneProps}
+            className={`flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border-[1.5px] p-[30px] text-center ${
+              reviewPhotoDrop.isDragging
+                ? "border-solid border-[oklch(0.45_0.09_150)] bg-[oklch(0.9_0.05_145)]"
+                : "border-dashed border-[oklch(0.68_0.06_150)] bg-[oklch(0.95_0.03_145)]"
+            }`}
           >
             {reviewPhotoName ? (
               <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{reviewPhotoName}</div>
@@ -428,7 +445,8 @@ export default function SubmitForm() {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setReviewPhotoName(e.target.files?.[0]?.name ?? "")}
+              ref={reviewPhotoInputRef}
+              onChange={reviewPhotoDrop.onChange}
             />
           </label>
         </div>
