@@ -49,7 +49,14 @@ export async function submitReview(
   const bestFor = formData.getAll("best_for") as string[];
   const photo = formData.get("photo") as File | null;
 
-  let photo_url: string | null = null;
+  const { data: existingReview } = await supabase
+    .from("reviews")
+    .select("id, photo_url")
+    .eq("product_id", productId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  let photo_url: string | null = existingReview?.photo_url ?? null;
   if (photo && photo.size > 0) {
     const ext = photo.name.split(".").pop();
     const path = `reviews/${user.id}/${crypto.randomUUID()}${ext ? `.${ext}` : ""}`;
@@ -70,26 +77,33 @@ export async function submitReview(
     photo_url = publicUrl;
   }
 
-  const { data: review, error: insertError } = await supabase
-    .from("reviews")
-    .insert({
-      product_id: productId,
-      user_id: user.id,
-      overall: ratings.overall,
-      color: ratings.color,
-      aroma: ratings.aroma,
-      taste: ratings.taste,
-      finish: ratings.finish,
-      value_for_money: ratings.value_for_money,
-      what_i_loved,
-      could_be_better,
-      photo_url,
-    })
-    .select("id")
-    .single();
+  const reviewFields = {
+    overall: ratings.overall,
+    color: ratings.color,
+    aroma: ratings.aroma,
+    taste: ratings.taste,
+    finish: ratings.finish,
+    value_for_money: ratings.value_for_money,
+    what_i_loved,
+    could_be_better,
+    photo_url,
+  };
 
-  if (insertError || !review) {
-    return { error: insertError?.message ?? "Failed to submit review.", fieldErrors: {} };
+  const { data: review, error: writeError } = existingReview
+    ? await supabase.from("reviews").update(reviewFields).eq("id", existingReview.id).select("id").single()
+    : await supabase
+        .from("reviews")
+        .insert({ ...reviewFields, product_id: productId, user_id: user.id })
+        .select("id")
+        .single();
+
+  if (writeError || !review) {
+    return { error: writeError?.message ?? "Failed to submit review.", fieldErrors: {} };
+  }
+
+  if (existingReview) {
+    await supabase.from("review_taste_descriptors").delete().eq("review_id", review.id);
+    await supabase.from("review_best_for").delete().eq("review_id", review.id);
   }
 
   if (descriptors.length > 0) {

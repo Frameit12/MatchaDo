@@ -22,25 +22,40 @@ const BEST_FOR_OPTIONS = [
   { value: "Cooking", title: "Cooking", subtitle: "Baking and food recipes" },
 ];
 
+export type InitialReview = {
+  overall: number;
+  color: number;
+  aroma: number;
+  taste: number;
+  finish: number;
+  value_for_money: number;
+  whatILoved: string;
+  couldBeBetter: string;
+  descriptors: string[];
+  bestFor: string[];
+};
+
 export default function ReviewForm({
   action,
+  initialReview,
 }: {
   action: (prevState: ReviewFormState, formData: FormData) => Promise<ReviewFormState>;
+  initialReview?: InitialReview | null;
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
-  const [overall, setOverall] = useState(0);
+  const [overall, setOverall] = useState(initialReview?.overall ?? 0);
   const [criteria, setCriteria] = useState<Record<string, number>>({
-    color: 0,
-    aroma: 0,
-    taste: 0,
-    finish: 0,
-    value_for_money: 0,
+    color: initialReview?.color ?? 0,
+    aroma: initialReview?.aroma ?? 0,
+    taste: initialReview?.taste ?? 0,
+    finish: initialReview?.finish ?? 0,
+    value_for_money: initialReview?.value_for_money ?? 0,
   });
-  const [descriptors, setDescriptors] = useState<string[]>([]);
-  const [bestFor, setBestFor] = useState<string[]>([]);
-  const [whatILoved, setWhatILoved] = useState("");
-  const [couldBeBetter, setCouldBeBetter] = useState("");
+  const [descriptors, setDescriptors] = useState<string[]>(initialReview?.descriptors ?? []);
+  const [bestFor, setBestFor] = useState<string[]>(initialReview?.bestFor ?? []);
+  const [whatILoved, setWhatILoved] = useState(initialReview?.whatILoved ?? "");
+  const [couldBeBetter, setCouldBeBetter] = useState(initialReview?.couldBeBetter ?? "");
   const [photoName, setPhotoName] = useState("");
 
   function toggle(list: string[], setList: (v: string[]) => void, value: string) {
@@ -50,7 +65,7 @@ export default function ReviewForm({
   return (
     <div className="rounded-[20px] border border-[oklch(0.9_0.025_140)] bg-[oklch(0.99_0.006_140)] px-12 py-11">
       <h1 className="mb-1.5 text-2xl font-semibold text-[oklch(0.22_0.03_150)] font-[family-name:var(--font-shippori-mincho)]">
-        Write a Review
+        {initialReview ? "Edit Your Review" : "Write a Review"}
       </h1>
       <p className="mb-9 text-sm text-[oklch(0.48_0.02_140)]">
         Share your honest experience to help fellow matcha drinkers.
@@ -212,7 +227,7 @@ export default function ReviewForm({
           disabled={pending}
           className="w-full rounded-[14px] bg-[oklch(0.3_0.07_150)] py-4 text-base font-bold tracking-[0.01em] text-[oklch(0.99_0.005_140)] hover:bg-[oklch(0.25_0.07_150)] disabled:opacity-60"
         >
-          {pending ? "Submitting…" : "Submit Review"}
+          {pending ? "Saving…" : initialReview ? "Update Review" : "Submit Review"}
         </button>
       </form>
     </div>

@@ -110,6 +110,7 @@ export default async function ProductPage({
         avgOverall={avgOverall}
         criterionAverages={criterionAverages}
         topDescriptors={topDescriptors}
+        hasMyReview={user ? reviewList.some((review) => review.user_id === user.id) : false}
         reviews={reviewList.map((review) => ({
           id: review.id,
           username: usernameById.get(review.user_id) ?? "Anonymous",
@@ -118,6 +119,7 @@ export default async function ProductPage({
           descriptors: descriptorsByReview.get(review.id) ?? [],
           whatILoved: review.what_i_loved,
           couldBeBetter: review.could_be_better,
+          isMine: user ? review.user_id === user.id : false,
         }))}
       />
     </div>

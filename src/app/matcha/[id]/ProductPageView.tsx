@@ -19,6 +19,7 @@ type ReviewCardData = {
   descriptors: string[];
   whatILoved: string | null;
   couldBeBetter: string | null;
+  isMine: boolean;
 };
 
 export type ProductPageViewProps = {
@@ -37,6 +38,7 @@ export type ProductPageViewProps = {
   avgOverall: number;
   criterionAverages: Record<CriterionKey, number>;
   topDescriptors: string[];
+  hasMyReview: boolean;
   reviews: ReviewCardData[];
 };
 
@@ -49,6 +51,7 @@ export default function ProductPageView({
   avgOverall,
   criterionAverages,
   topDescriptors,
+  hasMyReview,
   reviews,
 }: ProductPageViewProps) {
   const grade = product.grade ?? "Unknown";
@@ -147,7 +150,7 @@ export default function ProductPageView({
             href={`/matcha/${productId}/review`}
             className="shrink-0 rounded-lg bg-[oklch(0.32_0.06_150)] px-7 py-3.5 text-[15px] font-bold whitespace-nowrap text-[oklch(0.98_0.01_135)]"
           >
-            Write a Review
+            {hasMyReview ? "Edit My Review" : "Write a Review"}
           </Link>
         </div>
 
@@ -259,7 +262,14 @@ export default function ProductPageView({
                         {review.username.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div className="text-[15px] font-semibold text-[oklch(0.24_0.02_150)]">{review.username}</div>
+                        <div className="text-[15px] font-semibold text-[oklch(0.24_0.02_150)]">
+                          {review.username}
+                          {review.isMine && (
+                            <span className="ml-2 rounded-full bg-[oklch(0.93_0.03_140)] px-2.5 py-0.5 text-[11px] font-semibold text-[oklch(0.32_0.06_150)]">
+                              Your review
+                            </span>
+                          )}
+                        </div>
                         <div className="text-[13px] text-[oklch(0.52_0.02_150)]">{review.createdAtLabel}</div>
                       </div>
                     </div>

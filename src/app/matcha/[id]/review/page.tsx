@@ -43,6 +43,33 @@ export default async function WriteReviewPage({
     notFound();
   }
 
+  const { data: existingReview } = await supabase
+    .from("reviews")
+    .select("id, overall, color, aroma, taste, finish, value_for_money, what_i_loved, could_be_better, photo_url")
+    .eq("product_id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  let initialReview = null;
+  if (existingReview) {
+    const [{ data: descriptorRows }, { data: bestForRows }] = await Promise.all([
+      supabase.from("review_taste_descriptors").select("descriptor").eq("review_id", existingReview.id),
+      supabase.from("review_best_for").select("tag").eq("review_id", existingReview.id),
+    ]);
+    initialReview = {
+      overall: existingReview.overall,
+      color: existingReview.color,
+      aroma: existingReview.aroma,
+      taste: existingReview.taste,
+      finish: existingReview.finish,
+      value_for_money: existingReview.value_for_money,
+      whatILoved: existingReview.what_i_loved ?? "",
+      couldBeBetter: existingReview.could_be_better ?? "",
+      descriptors: (descriptorRows ?? []).map((r) => r.descriptor),
+      bestFor: (bestForRows ?? []).map((r) => r.tag),
+    };
+  }
+
   const boundSubmitReview = submitReview.bind(null, id);
 
   return (
@@ -103,14 +130,14 @@ export default async function WriteReviewPage({
               {product.product_name}
             </div>
             <div className="mt-1 text-[13px] text-[oklch(0.45_0.02_140)]">
-              You&apos;re writing a review for this product
+              {initialReview ? "You're editing your review for this product" : "You're writing a review for this product"}
             </div>
           </div>
         </div>
       </div>
 
       <div className="mx-auto max-w-[880px] px-6 pt-9 pb-24">
-        <ReviewForm action={boundSubmitReview} />
+        <ReviewForm action={boundSubmitReview} initialReview={initialReview} />
       </div>
     </div>
   );
