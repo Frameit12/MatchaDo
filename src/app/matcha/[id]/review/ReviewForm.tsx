@@ -214,8 +214,20 @@ export default function ReviewForm({
                 : "border-dashed border-[oklch(0.78_0.04_140)] bg-[oklch(0.975_0.012_140)]"
             }`}
           >
-            <div className="flex h-[180px] w-full items-center justify-center rounded-xl bg-[oklch(0.97_0.008_140)] text-center text-sm text-[oklch(0.5_0.02_140)]">
-              {photoName || "Drop a photo or click to upload"}
+            <div className="flex h-[180px] w-full items-center justify-center gap-3 rounded-xl bg-[oklch(0.97_0.008_140)] text-center text-sm text-[oklch(0.5_0.02_140)]">
+              {photoDrop.previewUrl ? (
+                <div className="flex flex-col items-center gap-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photoDrop.previewUrl}
+                    alt=""
+                    className="h-24 w-24 rounded-lg object-cover"
+                  />
+                  <div className="font-medium text-[oklch(0.35_0.07_150)]">{photoName}</div>
+                </div>
+              ) : (
+                "Drop a photo or click to upload"
+              )}
             </div>
             <input
               id="review-photo-input"

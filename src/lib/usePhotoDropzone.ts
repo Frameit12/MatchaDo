@@ -1,12 +1,19 @@
 "use client";
 
-import { useState, type RefObject, type DragEvent, type ChangeEvent } from "react";
+import { useEffect, useState, type RefObject, type DragEvent, type ChangeEvent } from "react";
 
 export function usePhotoDropzone(
   inputRef: RefObject<HTMLInputElement | null>,
   onFileNameChange: (name: string) => void
 ) {
   const [isDragging, setIsDragging] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   function applyFiles(files: FileList | null) {
     const file = files?.[0];
@@ -14,10 +21,15 @@ export function usePhotoDropzone(
     if (files && inputRef.current) {
       inputRef.current.files = files;
     }
+    setPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return file ? URL.createObjectURL(file) : null;
+    });
   }
 
   return {
     isDragging,
+    previewUrl,
     dropzoneProps: {
       onDragOver: (e: DragEvent) => {
         e.preventDefault();

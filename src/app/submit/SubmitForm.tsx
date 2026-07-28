@@ -260,8 +260,16 @@ export default function SubmitForm() {
                 : "border-dashed border-[oklch(0.68_0.06_150)] bg-[oklch(0.95_0.03_145)]"
             }`}
           >
-            {photoName ? (
-              <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{photoName}</div>
+            {productPhotoDrop.previewUrl ? (
+              <div className="flex flex-col items-center gap-2.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={productPhotoDrop.previewUrl}
+                  alt=""
+                  className="h-24 w-24 rounded-lg object-cover"
+                />
+                <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{photoName}</div>
+              </div>
             ) : (
               <div className="flex flex-col items-center gap-2.5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[oklch(0.88_0.05_148)]">
@@ -432,8 +440,16 @@ export default function SubmitForm() {
                 : "border-dashed border-[oklch(0.68_0.06_150)] bg-[oklch(0.95_0.03_145)]"
             }`}
           >
-            {reviewPhotoName ? (
-              <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{reviewPhotoName}</div>
+            {reviewPhotoDrop.previewUrl ? (
+              <div className="flex flex-col items-center gap-2.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={reviewPhotoDrop.previewUrl}
+                  alt=""
+                  className="h-24 w-24 rounded-lg object-cover"
+                />
+                <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{reviewPhotoName}</div>
+              </div>
             ) : (
               <div className="text-sm font-medium text-[oklch(0.4_0.06_150)]">
                 Drop a photo or click to upload
