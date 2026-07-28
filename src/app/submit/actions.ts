@@ -32,14 +32,40 @@ function levenshtein(a: string, b: string): number {
   return dp[a.length][b.length];
 }
 
+const GRADE_WORDS = ["ceremonial", "culinary", "unknown"];
+
+// Someone may type the grade into the product name field instead of using
+// the separate Grade dropdown (e.g. product name "Shuga Ceremonial" when the
+// stored product is "Shuga" with grade "Ceremonial"). Comparing with these
+// words stripped catches that without loosening typo-matching elsewhere.
+function stripGradeWords(value: string): string {
+  return value
+    .split(" ")
+    .filter((word) => !GRADE_WORDS.includes(word))
+    .join(" ")
+    .trim();
+}
+
+function isCloseEnough(a: string, b: string): boolean {
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const dist = levenshtein(a, b);
+  const threshold = Math.max(1, Math.floor(Math.max(a.length, b.length) * 0.15));
+  return dist <= threshold;
+}
+
 function closeness(a: string, b: string): "exact" | "similar" | null {
   const na = normalize(a);
   const nb = normalize(b);
   if (!na || !nb) return null;
   if (na === nb) return "exact";
-  const dist = levenshtein(na, nb);
-  const threshold = Math.max(1, Math.floor(Math.max(na.length, nb.length) * 0.15));
-  return dist <= threshold ? "similar" : null;
+  if (isCloseEnough(na, nb)) return "similar";
+
+  const sa = stripGradeWords(na);
+  const sb = stripGradeWords(nb);
+  if (sa && sb && isCloseEnough(sa, sb)) return "similar";
+
+  return null;
 }
 
 export type DuplicateMatch = {
