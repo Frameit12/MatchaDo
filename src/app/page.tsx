@@ -88,9 +88,12 @@ export default async function Home() {
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
-          <button className="shrink-0 rounded-[20px] border border-[oklch(0.7_0.06_145)] px-[18px] py-[9px] text-sm font-medium whitespace-nowrap text-[oklch(0.35_0.06_145)] transition-colors hover:bg-[oklch(0.94_0.03_145)]">
+          <Link
+            href="/submit"
+            className="shrink-0 rounded-[20px] border border-[oklch(0.7_0.06_145)] px-[18px] py-[9px] text-sm font-medium whitespace-nowrap text-[oklch(0.35_0.06_145)] transition-colors hover:bg-[oklch(0.94_0.03_145)]"
+          >
             Submit a Matcha
-          </button>
+          </Link>
 
           {user ? (
             <>
