@@ -146,12 +146,30 @@ export default function ProductPageView({
               )}
             </div>
           </div>
-          <Link
-            href={`/matcha/${productId}/review`}
-            className="shrink-0 rounded-lg bg-[oklch(0.32_0.06_150)] px-7 py-3.5 text-[15px] font-bold whitespace-nowrap text-[oklch(0.98_0.01_135)]"
-          >
-            {hasMyReview ? "Edit My Review" : "Write a Review"}
-          </Link>
+          {hasMyReview ? (
+            <Link
+              href={`/matcha/${productId}/review`}
+              className="flex shrink-0 items-center gap-1.5 text-[15px] font-semibold whitespace-nowrap text-[oklch(0.32_0.06_150)] underline underline-offset-4"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M4 20h4l10.5-10.5a2.121 2.121 0 0 0-3-3L5 17v3Z"
+                  stroke="oklch(0.32 0.06 150)"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Edit my review
+            </Link>
+          ) : (
+            <Link
+              href={`/matcha/${productId}/review`}
+              className="shrink-0 rounded-lg bg-[oklch(0.32_0.06_150)] px-7 py-3.5 text-[15px] font-bold whitespace-nowrap text-[oklch(0.98_0.01_135)]"
+            >
+              Write a Review
+            </Link>
+          )}
         </div>
 
         <div className="mb-16 grid grid-cols-1 gap-14 lg:grid-cols-[minmax(280px,420px)_1fr]">
