@@ -434,6 +434,12 @@ export default function SubmitForm() {
         </div>
 
         {state.error && <p className="text-sm text-[oklch(0.55_0.13_30)]">{state.error}</p>}
+        {!state.error && Object.keys(state.fieldErrors).length > 0 && (
+          <p className="text-sm text-[oklch(0.55_0.13_30)]">
+            Please fix the highlighted field{Object.keys(state.fieldErrors).length > 1 ? "s" : ""} above before
+            submitting.
+          </p>
+        )}
 
         <button
           type="submit"
