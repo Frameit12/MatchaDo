@@ -11,26 +11,9 @@ export default function SubmitForm() {
   const [photoName, setPhotoName] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
-  // TEMP debug trail — visible on-page log of what actually happens when
-  // the button is clicked, since devtools console isn't accessible here.
-  const [debugLog, setDebugLog] = useState<string[]>(["(waiting for click)"]);
-  function logDebug(msg: string) {
-    setDebugLog((prev) => [...prev, `${new Date().toLocaleTimeString()} — ${msg}`]);
-  }
-
   useEffect(() => {
     if (state.success) setSubmitted(true);
   }, [state.success]);
-
-  useEffect(() => {
-    logDebug(`pending changed to: ${pending}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pending]);
-
-  useEffect(() => {
-    logDebug(`state changed: error=${JSON.stringify(state.error)} success=${state.success} fieldErrors=${JSON.stringify(state.fieldErrors)}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
 
   function resetForm() {
     formRef.current?.reset();
@@ -74,7 +57,6 @@ export default function SubmitForm() {
       <form
         ref={formRef}
         action={formAction}
-        onSubmit={() => logDebug("form onSubmit fired (React received the click)")}
         className="flex flex-col gap-[26px] rounded-2xl border border-[oklch(0.91_0.02_145)] bg-[oklch(0.99_0.01_145)] p-10 shadow-[0_1px_3px_oklch(0.4_0.05_150_/_0.05)]"
       >
         <div className="flex flex-col gap-2">
@@ -168,16 +150,11 @@ export default function SubmitForm() {
           </label>
         </div>
 
-        {state.error && (
-          <p className="rounded-lg border border-[oklch(0.7_0.15_30)] bg-[oklch(0.96_0.03_30)] p-3 text-sm font-semibold text-[oklch(0.4_0.15_30)]">
-            {state.error}
-          </p>
-        )}
+        {state.error && <p className="text-sm text-[oklch(0.55_0.13_30)]">{state.error}</p>}
 
         <button
           type="submit"
           disabled={pending}
-          onClick={() => logDebug("button onClick fired")}
           className="mt-2 rounded-[10px] bg-[oklch(0.4_0.09_150)] py-[15px] text-base font-semibold text-[oklch(0.98_0.01_145)] transition-colors hover:bg-[oklch(0.35_0.09_150)] disabled:opacity-60"
         >
           {pending ? "Submitting…" : "Submit Matcha"}
@@ -187,18 +164,6 @@ export default function SubmitForm() {
       <p className="mt-5 text-center text-[13px] leading-[1.5] text-[oklch(0.55_0.02_150)]">
         All submissions are reviewed before going live to keep the catalog accurate.
       </p>
-
-      {/* TEMP debug panel — remove once the silent-submit bug is fixed. */}
-      <div className="mt-8 rounded-xl border-2 border-dashed border-[oklch(0.6_0.15_30)] bg-[oklch(0.98_0.01_60)] p-4 font-mono text-xs">
-        <div className="mb-2 font-bold text-[oklch(0.4_0.15_30)]">DEBUG LOG (temporary)</div>
-        <div>pending: {String(pending)}</div>
-        <div>state.success: {String(state.success)}</div>
-        <div>state.error: {state.error ?? "null"}</div>
-        <div>fieldErrors: {JSON.stringify(state.fieldErrors)}</div>
-        <div className="mt-2 max-h-40 overflow-y-auto whitespace-pre-wrap border-t border-[oklch(0.85_0.03_60)] pt-2">
-          {debugLog.join("\n")}
-        </div>
-      </div>
     </div>
   );
 }
