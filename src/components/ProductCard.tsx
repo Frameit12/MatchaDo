@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Product = {
   id: string;
   brand_name: string;
@@ -13,7 +15,9 @@ export default function ProductCard({ product }: { product: Product }) {
   const starWidthPct = Math.max(0, Math.min(1, product.avgRating / 5)) * 100;
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-[oklch(0.9_0.02_130)] bg-[oklch(0.99_0.005_95)] transition-shadow duration-200 hover:shadow-[0_12px_28px_oklch(0.3_0.03_145_/_0.12)]">
+    <Link
+      href={`/matcha/${product.id}`}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-[oklch(0.9_0.02_130)] bg-[oklch(0.99_0.005_95)] transition-shadow duration-200 hover:shadow-[0_12px_28px_oklch(0.3_0.03_145_/_0.12)]">
       <div className="flex h-[150px] flex-col items-center justify-center bg-[linear-gradient(135deg,oklch(0.92_0.04_140)_0%,oklch(0.86_0.06_145)_100%)]">
         {product.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -80,6 +84,6 @@ export default function ProductCard({ product }: { product: Product }) {
           </span>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
