@@ -105,10 +105,10 @@ export default async function Home() {
           A community for matcha lovers
         </span>
         <h1 className="mb-[18px] max-w-[680px] text-[46px] leading-[1.3] font-semibold text-[oklch(0.24_0.03_140)] font-[family-name:var(--font-noto-serif-jp)]">
-          Discover and rate matcha from around the world
+          Discover and rate matcha from Japan and beyond
         </h1>
         <p className="mb-[34px] max-w-[520px] text-base leading-[1.6] text-[oklch(0.42_0.02_120)]">
-          Explore ceremonial, culinary, and unknown grades reviewed by a community that knows their matcha.
+          Explore ceremonial and culinary grades reviewed by a community that knows their matcha.
         </p>
         <Link
           href="/search"
