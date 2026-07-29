@@ -27,9 +27,21 @@ export function usePhotoDropzone(
     });
   }
 
+  function clear() {
+    onFileNameChange("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+    setPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+  }
+
   return {
     isDragging,
     previewUrl,
+    clear,
     dropzoneProps: {
       onDragOver: (e: DragEvent) => {
         e.preventDefault();

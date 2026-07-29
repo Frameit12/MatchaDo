@@ -262,12 +262,26 @@ export default function SubmitForm() {
           >
             {productPhotoDrop.previewUrl ? (
               <div className="flex flex-col items-center gap-2.5">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={productPhotoDrop.previewUrl}
-                  alt=""
-                  className="h-24 w-24 rounded-lg object-cover"
-                />
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={productPhotoDrop.previewUrl}
+                    alt=""
+                    className="h-24 w-24 rounded-lg object-cover"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Remove photo"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      productPhotoDrop.clear();
+                    }}
+                    className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[oklch(0.3_0.06_150)] text-xs font-bold text-white"
+                  >
+                    ✕
+                  </button>
+                </div>
                 <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{photoName}</div>
               </div>
             ) : (
@@ -442,12 +456,26 @@ export default function SubmitForm() {
           >
             {reviewPhotoDrop.previewUrl ? (
               <div className="flex flex-col items-center gap-2.5">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={reviewPhotoDrop.previewUrl}
-                  alt=""
-                  className="h-24 w-24 rounded-lg object-cover"
-                />
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={reviewPhotoDrop.previewUrl}
+                    alt=""
+                    className="h-24 w-24 rounded-lg object-cover"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Remove photo"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      reviewPhotoDrop.clear();
+                    }}
+                    className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[oklch(0.3_0.06_150)] text-xs font-bold text-white"
+                  >
+                    ✕
+                  </button>
+                </div>
                 <div className="text-sm font-medium text-[oklch(0.35_0.07_150)]">{reviewPhotoName}</div>
               </div>
             ) : (

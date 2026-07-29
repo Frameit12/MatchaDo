@@ -65,6 +65,7 @@ export default async function WriteReviewPage({
       value_for_money: existingReview.value_for_money,
       whatILoved: existingReview.what_i_loved ?? "",
       couldBeBetter: existingReview.could_be_better ?? "",
+      photoUrl: existingReview.photo_url,
       descriptors: (descriptorRows ?? []).map((r) => r.descriptor),
       bestFor: (bestForRows ?? []).map((r) => r.tag),
     };

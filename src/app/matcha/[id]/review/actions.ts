@@ -48,6 +48,7 @@ export async function submitReview(
   const descriptors = formData.getAll("descriptors") as string[];
   const bestFor = formData.getAll("best_for") as string[];
   const photo = formData.get("photo") as File | null;
+  const removePhoto = formData.get("remove_photo") === "true";
 
   const { data: existingReview } = await supabase
     .from("reviews")
@@ -56,7 +57,7 @@ export async function submitReview(
     .eq("user_id", user.id)
     .maybeSingle();
 
-  let photo_url: string | null = existingReview?.photo_url ?? null;
+  let photo_url: string | null = removePhoto ? null : (existingReview?.photo_url ?? null);
   if (photo && photo.size > 0) {
     const ext = photo.name.split(".").pop();
     const path = `reviews/${user.id}/${crypto.randomUUID()}${ext ? `.${ext}` : ""}`;

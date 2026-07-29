@@ -32,6 +32,7 @@ export type InitialReview = {
   value_for_money: number;
   whatILoved: string;
   couldBeBetter: string;
+  photoUrl: string | null;
   descriptors: string[];
   bestFor: string[];
 };
@@ -60,6 +61,8 @@ export default function ReviewForm({
   const [photoName, setPhotoName] = useState("");
   const photoInputRef = useRef<HTMLInputElement>(null);
   const photoDrop = usePhotoDropzone(photoInputRef, setPhotoName);
+  const [existingPhotoUrl, setExistingPhotoUrl] = useState(initialReview?.photoUrl ?? null);
+  const [removeExistingPhoto, setRemoveExistingPhoto] = useState(false);
 
   function toggle(list: string[], setList: (v: string[]) => void, value: string) {
     setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
@@ -217,18 +220,54 @@ export default function ReviewForm({
             <div className="flex h-[180px] w-full items-center justify-center gap-3 rounded-xl bg-[oklch(0.97_0.008_140)] text-center text-sm text-[oklch(0.5_0.02_140)]">
               {photoDrop.previewUrl ? (
                 <div className="flex flex-col items-center gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={photoDrop.previewUrl}
-                    alt=""
-                    className="h-24 w-24 rounded-lg object-cover"
-                  />
+                  <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={photoDrop.previewUrl}
+                      alt=""
+                      className="h-24 w-24 rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      aria-label="Remove photo"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        photoDrop.clear();
+                      }}
+                      className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[oklch(0.3_0.07_150)] text-xs font-bold text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
                   <div className="font-medium text-[oklch(0.35_0.07_150)]">{photoName}</div>
+                </div>
+              ) : existingPhotoUrl && !removeExistingPhoto ? (
+                <div className="flex flex-col items-center gap-2">
+                  <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={existingPhotoUrl} alt="" className="h-24 w-24 rounded-lg object-cover" />
+                    <button
+                      type="button"
+                      aria-label="Remove photo"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setRemoveExistingPhoto(true);
+                        setExistingPhotoUrl(null);
+                      }}
+                      className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[oklch(0.3_0.07_150)] text-xs font-bold text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="font-medium text-[oklch(0.35_0.07_150)]">Current photo</div>
                 </div>
               ) : (
                 "Drop a photo or click to upload"
               )}
             </div>
+            <input type="hidden" name="remove_photo" value={removeExistingPhoto ? "true" : "false"} />
             <input
               id="review-photo-input"
               name="photo"
