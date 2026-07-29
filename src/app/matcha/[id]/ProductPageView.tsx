@@ -2,6 +2,7 @@ import Link from "next/link";
 import StarRow from "@/components/StarRow";
 import DeleteProductButton from "./DeleteProductButton";
 import DeleteReviewButton from "./DeleteReviewButton";
+import PhotoGallery from "./PhotoGallery";
 
 export const CRITERIA = [
   { key: "color", label: "Color" },
@@ -192,18 +193,18 @@ export default function ProductPageView({
         </div>
 
         <div className="mb-16 grid grid-cols-1 gap-14 lg:grid-cols-[minmax(280px,420px)_1fr]">
-          <div className="relative aspect-square overflow-hidden rounded-2xl border border-[oklch(0.88_0.02_135)] bg-[repeating-linear-gradient(135deg,oklch(0.93_0.03_140)_0px,oklch(0.93_0.03_140)_14px,oklch(0.9_0.03_140)_14px,oklch(0.9_0.03_140)_28px)]">
-            {product.photo_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={product.photo_url} alt={product.product_name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="rounded-md bg-[oklch(0.98_0.01_135_/_0.85)] px-4 py-2 font-mono text-[13px] text-[oklch(0.38_0.04_145)]">
-                  product photo
-                </span>
-              </div>
-            )}
-          </div>
+          <PhotoGallery
+            alt={product.product_name}
+            photos={[
+              ...(product.photo_url ? [{ url: product.photo_url, caption: "Product photo" }] : []),
+              ...reviews
+                .filter((review) => review.photoUrl)
+                .map((review) => ({
+                  url: review.photoUrl as string,
+                  caption: `${review.username}'s photo`,
+                })),
+            ]}
+          />
 
           <div>
             {reviewCount > 0 ? (
