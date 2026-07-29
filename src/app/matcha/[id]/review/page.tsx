@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ReviewForm from "./ReviewForm";
-import { submitReview } from "./actions";
+import { submitReview, deleteReview } from "./actions";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -72,6 +72,7 @@ export default async function WriteReviewPage({
   }
 
   const boundSubmitReview = submitReview.bind(null, id);
+  const boundDeleteReview = existingReview ? deleteReview.bind(null, id, existingReview.id) : null;
 
   return (
     <div
@@ -140,7 +141,7 @@ export default async function WriteReviewPage({
       </div>
 
       <div className="mx-auto max-w-[880px] px-6 pt-9 pb-24">
-        <ReviewForm action={boundSubmitReview} initialReview={initialReview} />
+        <ReviewForm action={boundSubmitReview} initialReview={initialReview} onDelete={boundDeleteReview} />
       </div>
     </div>
   );

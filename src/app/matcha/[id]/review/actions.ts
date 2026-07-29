@@ -127,3 +127,18 @@ export async function submitReview(
 
   redirect(`/matcha/${productId}`);
 }
+
+export async function deleteReview(productId: string, reviewId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  await supabase.from("reviews").delete().eq("id", reviewId).eq("user_id", user.id);
+
+  redirect(`/matcha/${productId}`);
+}

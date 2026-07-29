@@ -40,9 +40,11 @@ export type InitialReview = {
 export default function ReviewForm({
   action,
   initialReview,
+  onDelete,
 }: {
   action: (prevState: ReviewFormState, formData: FormData) => Promise<ReviewFormState>;
   initialReview?: InitialReview | null;
+  onDelete?: (() => Promise<void>) | null;
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
@@ -290,6 +292,25 @@ export default function ReviewForm({
           {pending ? "Saving…" : initialReview ? "Update Review" : "Submit Review"}
         </button>
       </form>
+
+      {onDelete && (
+        <form
+          action={onDelete}
+          onSubmit={(e) => {
+            if (!window.confirm("Delete your review? This can't be undone.")) {
+              e.preventDefault();
+            }
+          }}
+          className="mt-4 text-center"
+        >
+          <button
+            type="submit"
+            className="text-sm font-semibold text-[oklch(0.55_0.13_30)] underline underline-offset-4"
+          >
+            Delete review
+          </button>
+        </form>
+      )}
     </div>
   );
 }
