@@ -2,6 +2,8 @@ import { Noto_Sans_JP, Shippori_Mincho } from "next/font/google";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProductPageView, { CRITERIA, type CriterionKey } from "./ProductPageView";
+import { deleteProduct } from "./actions";
+import { deleteReview } from "./review/actions";
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
@@ -39,6 +41,12 @@ export default async function ProductPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const isAdmin = user
+    ? Boolean(
+        (await supabase.from("profiles").select("is_admin").eq("id", user.id).single()).data?.is_admin
+      )
+    : false;
 
   const { data: product } = await supabase
     .from("products")
@@ -99,6 +107,8 @@ export default async function ProductPage({
     redirect("/");
   }
 
+  const boundDeleteProduct = deleteProduct.bind(null, id);
+
   return (
     <div className={`${notoSansJP.variable} ${shipporiMincho.variable}`}>
       <ProductPageView
@@ -111,6 +121,8 @@ export default async function ProductPage({
         criterionAverages={criterionAverages}
         topDescriptors={topDescriptors}
         hasMyReview={user ? reviewList.some((review) => review.user_id === user.id) : false}
+        isAdmin={isAdmin}
+        onDeleteProduct={isAdmin ? boundDeleteProduct : null}
         reviews={reviewList.map((review) => ({
           id: review.id,
           username: usernameById.get(review.user_id) ?? "Anonymous",
@@ -121,6 +133,7 @@ export default async function ProductPage({
           couldBeBetter: review.could_be_better,
           photoUrl: review.photo_url,
           isMine: user ? review.user_id === user.id : false,
+          onDelete: isAdmin ? deleteReview.bind(null, id, review.id) : null,
         }))}
       />
     </div>

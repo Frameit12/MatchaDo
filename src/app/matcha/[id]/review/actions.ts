@@ -138,7 +138,13 @@ export async function deleteReview(productId: string, reviewId: string) {
     redirect("/login");
   }
 
-  await supabase.from("reviews").delete().eq("id", reviewId).eq("user_id", user.id);
+  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single();
+
+  let query = supabase.from("reviews").delete().eq("id", reviewId);
+  if (!profile?.is_admin) {
+    query = query.eq("user_id", user.id);
+  }
+  await query;
 
   redirect(`/matcha/${productId}`);
 }
