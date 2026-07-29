@@ -110,8 +110,6 @@ export default function ProductPageView({
         <div className="mb-[18px] flex items-center gap-2 text-[13px] text-[oklch(0.5_0.02_150)]">
           <Link href="/">Home</Link>
           <span>/</span>
-          <span>{grade} Grade</span>
-          <span>/</span>
           <span className="text-[oklch(0.35_0.02_150)]">{product.product_name}</span>
         </div>
 
