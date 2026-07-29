@@ -72,9 +72,28 @@ export default function ReviewForm({
 
   return (
     <div className="rounded-[20px] border border-[oklch(0.9_0.025_140)] bg-[oklch(0.99_0.006_140)] px-12 py-11">
-      <h1 className="mb-1.5 text-2xl font-semibold text-[oklch(0.22_0.03_150)] font-[family-name:var(--font-shippori-mincho)]">
-        {initialReview ? "Edit Your Review" : "Write a Review"}
-      </h1>
+      <div className="mb-1.5 flex items-baseline justify-between gap-4">
+        <h1 className="text-2xl font-semibold text-[oklch(0.22_0.03_150)] font-[family-name:var(--font-shippori-mincho)]">
+          {initialReview ? "Edit Your Review" : "Write a Review"}
+        </h1>
+        {onDelete && (
+          <form
+            action={onDelete}
+            onSubmit={(e) => {
+              if (!window.confirm("Delete your review? This can't be undone.")) {
+                e.preventDefault();
+              }
+            }}
+          >
+            <button
+              type="submit"
+              className="text-sm font-medium text-[oklch(0.55_0.02_140)] underline underline-offset-4 hover:text-[oklch(0.55_0.13_30)]"
+            >
+              Delete review
+            </button>
+          </form>
+        )}
+      </div>
       <p className="mb-9 text-sm text-[oklch(0.48_0.02_140)]">
         Share your honest experience to help fellow matcha drinkers.
       </p>
@@ -292,25 +311,6 @@ export default function ReviewForm({
           {pending ? "Saving…" : initialReview ? "Update Review" : "Submit Review"}
         </button>
       </form>
-
-      {onDelete && (
-        <form
-          action={onDelete}
-          onSubmit={(e) => {
-            if (!window.confirm("Delete your review? This can't be undone.")) {
-              e.preventDefault();
-            }
-          }}
-          className="mt-4 text-center"
-        >
-          <button
-            type="submit"
-            className="text-sm font-semibold text-[oklch(0.55_0.13_30)] underline underline-offset-4"
-          >
-            Delete review
-          </button>
-        </form>
-      )}
     </div>
   );
 }
