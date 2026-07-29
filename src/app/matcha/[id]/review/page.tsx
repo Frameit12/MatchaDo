@@ -89,13 +89,15 @@ export default async function WriteReviewPage({
           </span>
         </Link>
 
-        <div className="relative max-w-[520px] flex-1">
+        <form action="/search" className="relative max-w-[520px] flex-1">
           <input
-            placeholder="Search matcha, brands, reviews..."
+            type="text"
+            name="q"
+            placeholder="Search brands, products, or origins..."
             className="w-full rounded-3xl border border-[oklch(0.87_0.03_140)] bg-[oklch(0.965_0.015_140)] py-[11px] pr-4 pl-10 text-sm outline-none"
           />
           <span className="absolute top-1/2 left-3.5 -translate-y-1/2 text-[15px] opacity-55">⌕</span>
-        </div>
+        </form>
 
         <nav className="flex shrink-0 items-center gap-5 whitespace-nowrap">
           <Link

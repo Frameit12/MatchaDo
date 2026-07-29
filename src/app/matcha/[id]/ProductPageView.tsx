@@ -71,13 +71,21 @@ export default function ProductPageView({
           </span>
         </Link>
 
-        <div className="flex max-w-[480px] flex-1 items-center gap-2 rounded-[10px] border border-[oklch(0.88_0.02_135)] bg-[oklch(0.99_0.005_135)] px-3.5 py-2.5">
+        <form
+          action="/search"
+          className="flex max-w-[480px] flex-1 items-center gap-2 rounded-[10px] border border-[oklch(0.88_0.02_135)] bg-[oklch(0.99_0.005_135)] px-3.5 py-2.5"
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
             <circle cx="11" cy="11" r="7" stroke="oklch(55% 0.03 150)" strokeWidth="2" />
             <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="oklch(55% 0.03 150)" strokeWidth="2" strokeLinecap="round" />
           </svg>
-          <span className="text-sm text-[oklch(0.3_0.02_150)]">Search matcha, brands, origins...</span>
-        </div>
+          <input
+            type="text"
+            name="q"
+            placeholder="Search brands, products, or origins..."
+            className="w-full bg-transparent text-sm text-[oklch(0.3_0.02_150)] outline-none placeholder:text-[oklch(0.3_0.02_150)]"
+          />
+        </form>
 
         <div className="flex shrink-0 items-center gap-3">
           <Link
