@@ -43,7 +43,7 @@ export async function getApprovedProducts(options?: {
 
   const { data: reviews } = await supabase
     .from("reviews")
-    .select("product_id, overall")
+    .select("product_id, overall, photo_url, created_at")
     .in(
       "product_id",
       products.map((p) => p.id)
@@ -54,6 +54,17 @@ export async function getApprovedProducts(options?: {
     const reviewCount = productReviews.length;
     const avgRating =
       reviewCount > 0 ? productReviews.reduce((sum, r) => sum + r.overall, 0) / reviewCount : 0;
-    return { ...product, avgRating, reviewCount };
+
+    // Fall back to the most recent review photo when the product itself has
+    // no photo, so the card isn't stuck showing the empty placeholder.
+    let photo_url = product.photo_url;
+    if (!photo_url) {
+      const mostRecentPhotoReview = productReviews
+        .filter((r) => r.photo_url)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+      photo_url = mostRecentPhotoReview?.photo_url ?? null;
+    }
+
+    return { ...product, photo_url, avgRating, reviewCount };
   });
 }
