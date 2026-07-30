@@ -12,8 +12,11 @@ export type ProductWithRating = {
   reviewCount: number;
 };
 
+export const GRADES = ["Ceremonial", "Culinary", "Unknown"] as const;
+
 export async function getApprovedProducts(options?: {
   search?: string;
+  grade?: string;
   limit?: number;
 }): Promise<ProductWithRating[]> {
   const supabase = await createClient();
@@ -32,6 +35,10 @@ export async function getApprovedProducts(options?: {
     if (safe) {
       query = query.or(`brand_name.ilike.%${safe}%,product_name.ilike.%${safe}%,origin.ilike.%${safe}%`);
     }
+  }
+
+  if (options?.grade && (GRADES as readonly string[]).includes(options.grade)) {
+    query = query.eq("grade", options.grade);
   }
 
   if (options?.limit) {
