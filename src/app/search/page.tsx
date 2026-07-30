@@ -2,7 +2,7 @@ import { Inter, Noto_Serif_JP } from "next/font/google";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getApprovedProducts, GRADES } from "@/lib/products";
+import { getApprovedProducts, GRADES, BEST_FOR_TAGS } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 
 const inter = Inter({
@@ -20,11 +20,12 @@ const notoSerifJP = Noto_Serif_JP({
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; grade?: string }>;
+  searchParams: Promise<{ q?: string; grade?: string; bestFor?: string }>;
 }) {
-  const { q, grade: gradeParam } = await searchParams;
+  const { q, grade: gradeParam, bestFor: bestForParam } = await searchParams;
   const query = q?.trim() ?? "";
   const grade = (GRADES as readonly string[]).includes(gradeParam ?? "") ? gradeParam : undefined;
+  const bestFor = (BEST_FOR_TAGS as readonly string[]).includes(bestForParam ?? "") ? bestForParam : undefined;
 
   const supabase = await createClient();
   const {
@@ -33,12 +34,16 @@ export default async function SearchPage({
   const products = await getApprovedProducts({
     ...(query ? { search: query } : {}),
     ...(grade ? { grade } : {}),
+    ...(bestFor ? { bestFor } : {}),
   });
 
-  function hrefFor(gradeValue?: string) {
+  function hrefFor(overrides: { grade?: string | null; bestFor?: string | null }) {
     const params = new URLSearchParams();
+    const g = overrides.grade === undefined ? grade : overrides.grade;
+    const bf = overrides.bestFor === undefined ? bestFor : overrides.bestFor;
     if (query) params.set("q", query);
-    if (gradeValue) params.set("grade", gradeValue);
+    if (g) params.set("grade", g);
+    if (bf) params.set("bestFor", bf);
     const qs = params.toString();
     return qs ? `/search?${qs}` : "/search";
   }
@@ -79,6 +84,7 @@ export default async function SearchPage({
             className="w-full bg-transparent text-sm text-[oklch(0.25_0.01_100)] outline-none"
           />
           {grade && <input type="hidden" name="grade" value={grade} />}
+          {bestFor && <input type="hidden" name="bestFor" value={bestFor} />}
         </form>
 
         <div className="flex shrink-0 items-center gap-3">
@@ -122,9 +128,9 @@ export default async function SearchPage({
           {query ? `Search results for "${query}"` : "All Matcha"}
         </h1>
 
-        <div className="mb-7 flex flex-wrap gap-2.5">
+        <div className="mb-3 flex flex-wrap gap-2.5">
           <Link
-            href={hrefFor(undefined)}
+            href={hrefFor({ grade: null })}
             className={
               grade
                 ? "rounded-[20px] border-[1.5px] border-[oklch(0.75_0.04_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.35_0.06_145)]"
@@ -136,7 +142,7 @@ export default async function SearchPage({
           {GRADES.map((g) => (
             <Link
               key={g}
-              href={hrefFor(g)}
+              href={hrefFor({ grade: g })}
               className={
                 grade === g
                   ? "rounded-[20px] border-[1.5px] border-[oklch(0.45_0.09_145)] bg-[oklch(0.45_0.09_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.99_0.005_145)]"
@@ -144,6 +150,22 @@ export default async function SearchPage({
               }
             >
               {g}
+            </Link>
+          ))}
+        </div>
+
+        <div className="mb-7 flex flex-wrap gap-2.5">
+          {BEST_FOR_TAGS.map((tag) => (
+            <Link
+              key={tag}
+              href={hrefFor({ bestFor: bestFor === tag ? null : tag })}
+              className={
+                bestFor === tag
+                  ? "rounded-[20px] border-[1.5px] border-[oklch(0.45_0.09_145)] bg-[oklch(0.45_0.09_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.99_0.005_145)]"
+                  : "rounded-[20px] border-[1.5px] border-[oklch(0.75_0.04_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.35_0.06_145)]"
+              }
+            >
+              Good for {tag}
             </Link>
           ))}
         </div>
@@ -157,13 +179,13 @@ export default async function SearchPage({
         ) : (
           <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-[oklch(0.9_0.02_130)] py-20 text-center">
             <p className="text-lg font-semibold text-[oklch(0.24_0.03_140)] font-[family-name:var(--font-noto-serif-jp)]">
-              {query || grade ? "No matcha found" : "No matcha here yet"}
+              {query || grade || bestFor ? "No matcha found" : "No matcha here yet"}
             </p>
             <p className="max-w-sm text-sm text-[oklch(0.42_0.02_120)]">
               {query
-                ? `Nothing matched "${query}"${grade ? ` in ${grade}` : ""}. Try a different brand, product, or origin.`
-                : grade
-                  ? `No ${grade.toLowerCase()} matcha yet. Try a different grade or browse all.`
+                ? `Nothing matched "${query}"${grade ? ` in ${grade}` : ""}${bestFor ? ` good for ${bestFor}` : ""}. Try a different brand, product, or origin.`
+                : grade || bestFor
+                  ? `No matcha found${grade ? ` in ${grade}` : ""}${bestFor ? ` good for ${bestFor}` : ""} yet. Try a different filter or browse all.`
                   : "Be the first to submit a matcha and start the reviews rolling in."}
             </p>
           </div>

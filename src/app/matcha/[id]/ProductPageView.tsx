@@ -20,6 +20,7 @@ type ReviewCardData = {
   createdAtLabel: string;
   overall: number;
   descriptors: string[];
+  bestFor: string[];
   whatILoved: string | null;
   couldBeBetter: string | null;
   photoUrl: string | null;
@@ -43,6 +44,7 @@ export type ProductPageViewProps = {
   avgOverall: number;
   criterionAverages: Record<CriterionKey, number>;
   topDescriptors: string[];
+  topBestFor: string[];
   hasMyReview: boolean;
   isAdmin: boolean;
   onDeleteProduct: (() => Promise<void>) | null;
@@ -58,6 +60,7 @@ export default function ProductPageView({
   avgOverall,
   criterionAverages,
   topDescriptors,
+  topBestFor,
   hasMyReview,
   isAdmin,
   onDeleteProduct,
@@ -249,6 +252,28 @@ export default function ProductPageView({
                   </>
                 )}
 
+                {topBestFor.length > 0 && (
+                  <>
+                    <div className="mb-6">
+                      <div className="mb-0.5 text-[15px] font-bold text-[oklch(0.24_0.03_150)]">Best For</div>
+                      <div className="mb-3 text-[13px] text-[oklch(0.5_0.02_150)]">
+                        Based on {reviewCount} {reviewCount === 1 ? "review" : "reviews"}
+                      </div>
+                      <div className="flex flex-wrap gap-2.5">
+                        {topBestFor.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-[oklch(0.93_0.03_140)] px-4 py-1.5 text-[13px] font-semibold text-[oklch(0.28_0.06_150)]"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="my-6 h-px bg-[oklch(0.88_0.02_135)]" />
+                  </>
+                )}
+
                 <div className="flex flex-col gap-3.5">
                   {CRITERIA.map(({ key, label }) => (
                     <div key={key} className="grid grid-cols-[110px_1fr_34px] items-center gap-3">
@@ -326,6 +351,22 @@ export default function ProductPageView({
                       )}
                     </div>
                   </div>
+
+                  {review.bestFor.length > 0 && (
+                    <div className="mb-3.5 flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-bold tracking-[0.05em] text-[oklch(0.38_0.06_150)] uppercase">
+                        Best for
+                      </span>
+                      {review.bestFor.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-[oklch(0.93_0.03_140)] px-3 py-1 text-xs font-semibold text-[oklch(0.32_0.06_150)]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {review.whatILoved && (

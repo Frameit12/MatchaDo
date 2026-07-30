@@ -75,10 +75,13 @@ export default async function ProductPage({
 
   const reviewIds = reviewList.map((r) => r.id);
 
-  const [{ data: descriptorRows }, { data: profiles }] = await Promise.all([
+  const [{ data: descriptorRows }, { data: bestForRows }, { data: profiles }] = await Promise.all([
     reviewIds.length > 0
       ? supabase.from("review_taste_descriptors").select("review_id, descriptor").in("review_id", reviewIds)
       : Promise.resolve({ data: [] as { review_id: string; descriptor: string }[] }),
+    reviewIds.length > 0
+      ? supabase.from("review_best_for").select("review_id, tag").in("review_id", reviewIds)
+      : Promise.resolve({ data: [] as { review_id: string; tag: string }[] }),
     reviewList.length > 0
       ? supabase
           .from("profiles")
@@ -97,6 +100,14 @@ export default async function ProductPage({
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
     .map(([descriptor]) => descriptor);
+
+  const bestForByReview = new Map<string, string[]>();
+  const bestForCounts = new Map<string, number>();
+  for (const row of bestForRows ?? []) {
+    bestForByReview.set(row.review_id, [...(bestForByReview.get(row.review_id) ?? []), row.tag]);
+    bestForCounts.set(row.tag, (bestForCounts.get(row.tag) ?? 0) + 1);
+  }
+  const topBestFor = [...bestForCounts.entries()].sort((a, b) => b[1] - a[1]).map(([tag]) => tag);
 
   const usernameById = new Map((profiles ?? []).map((p) => [p.id, p.username]));
 
@@ -120,6 +131,7 @@ export default async function ProductPage({
         avgOverall={avgOverall}
         criterionAverages={criterionAverages}
         topDescriptors={topDescriptors}
+        topBestFor={topBestFor}
         hasMyReview={user ? reviewList.some((review) => review.user_id === user.id) : false}
         isAdmin={isAdmin}
         onDeleteProduct={isAdmin ? boundDeleteProduct : null}
@@ -129,6 +141,7 @@ export default async function ProductPage({
           createdAtLabel: formatDate(review.created_at),
           overall: review.overall,
           descriptors: descriptorsByReview.get(review.id) ?? [],
+          bestFor: bestForByReview.get(review.id) ?? [],
           whatILoved: review.what_i_loved,
           couldBeBetter: review.could_be_better,
           photoUrl: review.photo_url,

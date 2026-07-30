@@ -13,10 +13,12 @@ export type ProductWithRating = {
 };
 
 export const GRADES = ["Ceremonial", "Culinary"] as const;
+export const BEST_FOR_TAGS = ["Usucha", "Latte", "Cooking"] as const;
 
 export async function getApprovedProducts(options?: {
   search?: string;
   grade?: string;
+  bestFor?: string;
   limit?: number;
 }): Promise<ProductWithRating[]> {
   const supabase = await createClient();
@@ -39,6 +41,24 @@ export async function getApprovedProducts(options?: {
 
   if (options?.grade && (GRADES as readonly string[]).includes(options.grade)) {
     query = query.eq("grade", options.grade);
+  }
+
+  if (options?.bestFor && (BEST_FOR_TAGS as readonly string[]).includes(options.bestFor)) {
+    // best_for is a per-review tag, not a product column, so match any
+    // product with at least one review carrying this tag.
+    const { data: taggedReviews } = await supabase
+      .from("review_best_for")
+      .select("review_id")
+      .eq("tag", options.bestFor);
+    const reviewIds = (taggedReviews ?? []).map((r) => r.review_id);
+
+    if (reviewIds.length === 0) return [];
+
+    const { data: matchingReviews } = await supabase.from("reviews").select("product_id").in("id", reviewIds);
+    const productIds = [...new Set((matchingReviews ?? []).map((r) => r.product_id))];
+
+    if (productIds.length === 0) return [];
+    query = query.in("id", productIds);
   }
 
   if (options?.limit) {
