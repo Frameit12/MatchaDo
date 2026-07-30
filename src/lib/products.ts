@@ -12,7 +12,7 @@ export type ProductWithRating = {
   reviewCount: number;
 };
 
-export const GRADES = ["Ceremonial", "Culinary", "Unknown"] as const;
+export const GRADES = ["Ceremonial", "Culinary"] as const;
 
 export async function getApprovedProducts(options?: {
   search?: string;
