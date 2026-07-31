@@ -29,9 +29,14 @@ export default function LoginForm({ next, signupHref }: { next: string; signupHr
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="password" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Password
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Password
+            </label>
+            <Link href="/forgot-password" className="text-xs font-medium text-green-700 dark:text-green-500">
+              Forgot password?
+            </Link>
+          </div>
           <input
             id="password"
             name="password"
