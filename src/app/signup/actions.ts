@@ -26,7 +26,7 @@ export async function signup(
     password,
     options: {
       data: { username },
-      emailRedirectTo: `${origin}/auth/confirm?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${origin}${next}`,
     },
   });
 
