@@ -163,6 +163,22 @@ export default async function Home() {
           </div>
         )}
       </section>
+
+      <footer className="border-t border-[oklch(0.9_0.02_130)] px-12 py-6">
+        <div className="mx-auto flex max-w-[1180px] items-center justify-center gap-2.5 text-sm text-[oklch(0.5_0.02_120)]">
+          <Link href="/privacy" className="hover:text-[oklch(0.35_0.06_145)]">
+            Privacy
+          </Link>
+          <span>·</span>
+          <Link href="/terms" className="hover:text-[oklch(0.35_0.06_145)]">
+            Terms
+          </Link>
+          <span>·</span>
+          <Link href="/contact" className="hover:text-[oklch(0.35_0.06_145)]">
+            Contact
+          </Link>
+        </div>
+      </footer>
     </div>
   );
 }
