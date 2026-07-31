@@ -15,7 +15,7 @@ export async function notifyAdminOfPendingSubmission(product: {
 
   try {
     await resend.emails.send({
-      from: "Matchado <onboarding@resend.dev>",
+      from: "Matchado <notifications@matchado.app>",
       to: adminEmail,
       subject: `New product pending approval: ${product.brand_name} — ${product.product_name}`,
       html: `
