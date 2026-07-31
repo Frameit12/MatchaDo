@@ -2,6 +2,7 @@ import Link from "next/link";
 import StarRow from "@/components/StarRow";
 import DeleteProductButton from "./DeleteProductButton";
 import DeleteReviewButton from "./DeleteReviewButton";
+import ReportReviewButton from "./ReportReviewButton";
 import PhotoGallery from "./PhotoGallery";
 
 export const CRITERIA = [
@@ -26,6 +27,10 @@ type ReviewCardData = {
   photoUrl: string | null;
   isMine: boolean;
   onDelete: (() => Promise<void>) | null;
+  isLoggedIn: boolean;
+  hasReported: boolean;
+  loginHref: string;
+  onReport: (formData: FormData) => Promise<void>;
 };
 
 export type ProductPageViewProps = {
@@ -338,6 +343,14 @@ export default function ProductPageView({
                     </div>
                     <div className="flex flex-wrap items-center gap-2.5">
                       <StarRow rating={review.overall} />
+                      {!review.isMine && (
+                        <ReportReviewButton
+                          isLoggedIn={review.isLoggedIn}
+                          hasReported={review.hasReported}
+                          loginHref={review.loginHref}
+                          onReport={review.onReport}
+                        />
+                      )}
                       {review.descriptors.map((descriptor, i) => (
                         <span
                           key={i}

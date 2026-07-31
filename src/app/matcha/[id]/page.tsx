@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import ProductPageView, { CRITERIA, type CriterionKey } from "./ProductPageView";
 import { deleteProduct } from "./actions";
 import { deleteReview } from "./review/actions";
+import { reportReview } from "./reportActions";
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
@@ -75,20 +76,26 @@ export default async function ProductPage({
 
   const reviewIds = reviewList.map((r) => r.id);
 
-  const [{ data: descriptorRows }, { data: bestForRows }, { data: profiles }] = await Promise.all([
-    reviewIds.length > 0
-      ? supabase.from("review_taste_descriptors").select("review_id, descriptor").in("review_id", reviewIds)
-      : Promise.resolve({ data: [] as { review_id: string; descriptor: string }[] }),
-    reviewIds.length > 0
-      ? supabase.from("review_best_for").select("review_id, tag").in("review_id", reviewIds)
-      : Promise.resolve({ data: [] as { review_id: string; tag: string }[] }),
-    reviewList.length > 0
-      ? supabase
-          .from("profiles")
-          .select("id, username")
-          .in("id", [...new Set(reviewList.map((r) => r.user_id))])
-      : Promise.resolve({ data: [] as { id: string; username: string }[] }),
-  ]);
+  const [{ data: descriptorRows }, { data: bestForRows }, { data: profiles }, { data: myReportRows }] =
+    await Promise.all([
+      reviewIds.length > 0
+        ? supabase.from("review_taste_descriptors").select("review_id, descriptor").in("review_id", reviewIds)
+        : Promise.resolve({ data: [] as { review_id: string; descriptor: string }[] }),
+      reviewIds.length > 0
+        ? supabase.from("review_best_for").select("review_id, tag").in("review_id", reviewIds)
+        : Promise.resolve({ data: [] as { review_id: string; tag: string }[] }),
+      reviewList.length > 0
+        ? supabase
+            .from("profiles")
+            .select("id, username")
+            .in("id", [...new Set(reviewList.map((r) => r.user_id))])
+        : Promise.resolve({ data: [] as { id: string; username: string }[] }),
+      user && reviewIds.length > 0
+        ? supabase.from("review_reports").select("review_id").eq("reporter_id", user.id).in("review_id", reviewIds)
+        : Promise.resolve({ data: [] as { review_id: string }[] }),
+    ]);
+
+  const reportedReviewIds = new Set((myReportRows ?? []).map((r) => r.review_id));
 
   const descriptorsByReview = new Map<string, string[]>();
   const descriptorCounts = new Map<string, number>();
@@ -119,6 +126,7 @@ export default async function ProductPage({
   }
 
   const boundDeleteProduct = deleteProduct.bind(null, id);
+  const loginHref = `/login?next=${encodeURIComponent(`/matcha/${id}`)}`;
 
   return (
     <div className={`${notoSansJP.variable} ${shipporiMincho.variable}`}>
@@ -147,6 +155,10 @@ export default async function ProductPage({
           photoUrl: review.photo_url,
           isMine: user ? review.user_id === user.id : false,
           onDelete: isAdmin ? deleteReview.bind(null, id, review.id) : null,
+          isLoggedIn: Boolean(user),
+          hasReported: reportedReviewIds.has(review.id),
+          loginHref,
+          onReport: reportReview.bind(null, id, review.id),
         }))}
       />
     </div>
