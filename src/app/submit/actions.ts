@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { notifyAdminOfPendingSubmission } from "@/lib/email";
 
 const RATING_FIELDS = ["overall", "color", "aroma", "taste", "finish", "value_for_money"] as const;
 
@@ -194,6 +195,8 @@ export async function submitProduct(
   }
 
   const productId = insertedProduct.id;
+
+  await notifyAdminOfPendingSubmission({ id: productId, brand_name, product_name });
 
   const what_i_loved = ((formData.get("what_i_loved") as string) || "").trim() || null;
   const could_be_better = ((formData.get("could_be_better") as string) || "").trim() || null;
