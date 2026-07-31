@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { safeRedirectPath } from "@/lib/safeRedirect";
 
 export type AuthFormState = { error: string | null };
 
@@ -33,5 +34,5 @@ export async function login(
     return { error: "Invalid username or password." };
   }
 
-  redirect("/");
+  redirect(safeRedirectPath(formData.get("next")));
 }

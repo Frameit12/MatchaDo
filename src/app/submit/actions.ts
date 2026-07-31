@@ -112,7 +112,7 @@ export async function submitProduct(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=/submit");
   }
 
   const brand_name = ((formData.get("brand_name") as string) || "").trim();

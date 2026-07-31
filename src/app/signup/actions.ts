@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { safeRedirectPath } from "@/lib/safeRedirect";
 
 export type SignupFormState = { error: string | null; message: string | null };
 
@@ -14,6 +15,8 @@ export async function signup(
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
+  const next = safeRedirectPath(formData.get("next"));
+
   const headersList = await headers();
   const origin = headersList.get("origin");
 
@@ -23,7 +26,7 @@ export async function signup(
     password,
     options: {
       data: { username },
-      emailRedirectTo: `${origin}/auth/confirm`,
+      emailRedirectTo: `${origin}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });
 
@@ -34,7 +37,7 @@ export async function signup(
   // If email confirmation is disabled on the project, signUp already
   // returns an active session, so we can go straight in.
   if (data.session) {
-    redirect("/");
+    redirect(next);
   }
 
   return {

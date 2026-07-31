@@ -30,7 +30,7 @@ export default async function WriteReviewPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect(`/login?next=${encodeURIComponent(`/matcha/${id}/review`)}`);
   }
 
   const { data: product } = await supabase

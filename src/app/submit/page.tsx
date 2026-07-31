@@ -23,7 +23,7 @@ export default async function SubmitPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=/submit");
   }
 
   async function logout() {

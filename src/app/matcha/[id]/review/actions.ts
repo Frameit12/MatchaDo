@@ -23,7 +23,7 @@ export async function submitReview(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect(`/login?next=${encodeURIComponent(`/matcha/${productId}/review`)}`);
   }
 
   const ratings: Record<string, number> = {};
