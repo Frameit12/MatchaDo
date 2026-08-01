@@ -42,7 +42,7 @@ export default async function Home() {
       className={`${inter.variable} ${notoSerifJP.variable} min-h-screen bg-[oklch(0.98_0.012_95)] text-[oklch(0.22_0.015_100)] font-[family-name:var(--font-inter)]`}
     >
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center justify-between gap-6 border-b border-[oklch(0.9_0.02_130)] bg-[oklch(0.985_0.01_95)] px-12 py-[18px]">
+      <header className="sticky top-0 z-10 flex flex-col gap-3 border-b border-[oklch(0.9_0.02_130)] bg-[oklch(0.985_0.01_95)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-12 sm:py-[18px]">
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <div className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-[oklch(0.48_0.09_145)]">
             <span className="text-[17px] leading-none text-white font-[family-name:var(--font-noto-serif-jp)]">
@@ -56,7 +56,7 @@ export default async function Home() {
 
         <form
           action="/search"
-          className="flex max-w-[480px] flex-1 items-center gap-2.5 rounded-3xl border border-[oklch(0.88_0.02_130)] bg-[oklch(0.96_0.012_95)] px-[18px] py-[9px]"
+          className="flex w-full items-center gap-2.5 rounded-3xl border border-[oklch(0.88_0.02_130)] bg-[oklch(0.96_0.012_95)] px-[18px] py-[9px] sm:max-w-[480px] sm:flex-1"
         >
           <span className="text-[15px] text-[oklch(0.55_0.02_130)]">⌕</span>
           <input
@@ -67,7 +67,7 @@ export default async function Home() {
           />
         </form>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 sm:shrink-0 sm:flex-nowrap">
           <Link
             href="/submit"
             className="shrink-0 rounded-[20px] border border-[oklch(0.7_0.06_145)] px-[18px] py-[9px] text-sm font-medium whitespace-nowrap text-[oklch(0.35_0.06_145)] transition-colors hover:bg-[oklch(0.94_0.03_145)]"
@@ -141,7 +141,7 @@ export default async function Home() {
       </section>
 
       {/* Recently Added */}
-      <section className="mx-auto max-w-[1180px] px-12 pt-2 pb-24">
+      <section className="mx-auto max-w-[1180px] px-4 pt-2 pb-24 sm:px-12">
         <h2 className="mb-7 text-2xl font-semibold text-[oklch(0.24_0.03_140)] font-[family-name:var(--font-noto-serif-jp)]">
           Recently Added
         </h2>
@@ -164,7 +164,7 @@ export default async function Home() {
         )}
       </section>
 
-      <footer className="border-t border-[oklch(0.9_0.02_130)] px-12 py-6">
+      <footer className="border-t border-[oklch(0.9_0.02_130)] px-4 py-6 sm:px-12">
         <div className="mx-auto flex max-w-[1180px] items-center justify-center gap-2.5 text-sm text-[oklch(0.5_0.02_120)]">
           <Link href="/privacy" className="hover:text-[oklch(0.35_0.06_145)]">
             Privacy

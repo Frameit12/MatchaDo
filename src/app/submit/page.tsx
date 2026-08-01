@@ -37,8 +37,8 @@ export default async function SubmitPage() {
     <div
       className={`${inter.variable} ${notoSerifJP.variable} flex min-h-screen flex-col bg-[oklch(0.97_0.02_145)] font-[family-name:var(--font-inter)]`}
     >
-      <header className="flex items-center justify-between gap-6 border-b border-[oklch(0.91_0.02_145)] bg-[oklch(0.99_0.01_145)] px-14 py-[22px]">
-        <Link href="/" className="flex items-center gap-2.5">
+      <header className="flex flex-col gap-3 border-b border-[oklch(0.91_0.02_145)] bg-[oklch(0.99_0.01_145)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-14 sm:py-[22px]">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <div className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-[oklch(0.45_0.09_150)]">
             <span className="text-[17px] leading-none text-white font-[family-name:var(--font-noto-serif-jp)]">
               抹
@@ -49,14 +49,14 @@ export default async function SubmitPage() {
           </span>
         </Link>
 
-        <div className="mx-10 flex max-w-[440px] flex-1 items-center gap-2.5 rounded-[10px] border border-[oklch(0.89_0.02_145)] bg-[oklch(0.95_0.02_145)] px-4 py-2.5">
+        <div className="flex w-full items-center gap-2.5 rounded-[10px] border border-[oklch(0.89_0.02_145)] bg-[oklch(0.95_0.02_145)] px-4 py-2.5 sm:mx-10 sm:max-w-[440px] sm:flex-1">
           <div className="relative h-[15px] w-[15px] shrink-0 rounded-full border-2 border-[oklch(0.55_0.03_150)]">
             <div className="absolute -right-1 -bottom-1.5 h-0.5 w-1.5 rotate-45 rounded-sm bg-[oklch(0.55_0.03_150)]" />
           </div>
           <span className="text-sm text-[oklch(0.55_0.02_150)]">Search matcha, brands...</span>
         </div>
 
-        <nav className="flex items-center gap-4 text-[15px] font-semibold">
+        <nav className="flex flex-wrap items-center gap-3 text-[15px] font-semibold sm:flex-nowrap sm:gap-4">
           <Link
             href="/submit"
             className="rounded-[9px] bg-[oklch(0.4_0.09_150)] px-[18px] py-2.5 text-[oklch(0.98_0.01_145)]"

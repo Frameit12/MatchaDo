@@ -75,8 +75,8 @@ export default function ProductPageView({
 
   return (
     <div className="min-h-screen bg-[oklch(0.97_0.02_135)] text-[oklch(0.22_0.02_150)] font-[family-name:var(--font-noto-sans-jp)]">
-      <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-[oklch(0.89_0.02_135)] bg-[oklch(0.98_0.012_135)] px-12 py-[18px]">
-        <Link href="/" className="flex items-center gap-2.5">
+      <header className="sticky top-0 z-20 flex flex-col gap-3 border-b border-[oklch(0.89_0.02_135)] bg-[oklch(0.98_0.012_135)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-12 sm:py-[18px]">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <div className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-[oklch(0.32_0.06_150)]">
             <span className="text-[17px] text-[oklch(0.97_0.02_135)] font-[family-name:var(--font-shippori-mincho)]">
               抹
@@ -89,7 +89,7 @@ export default function ProductPageView({
 
         <form
           action="/search"
-          className="flex max-w-[480px] flex-1 items-center gap-2 rounded-[10px] border border-[oklch(0.88_0.02_135)] bg-[oklch(0.99_0.005_135)] px-3.5 py-2.5"
+          className="flex w-full items-center gap-2 rounded-[10px] border border-[oklch(0.88_0.02_135)] bg-[oklch(0.99_0.005_135)] px-3.5 py-2.5 sm:max-w-[480px] sm:flex-1"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
             <circle cx="11" cy="11" r="7" stroke="oklch(55% 0.03 150)" strokeWidth="2" />
@@ -103,7 +103,7 @@ export default function ProductPageView({
           />
         </form>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 sm:shrink-0 sm:flex-nowrap">
           <Link
             href="/submit"
             className="rounded-lg border border-[oklch(0.32_0.06_150)] px-[18px] py-2.5 text-sm font-semibold text-[oklch(0.3_0.06_150)]"
@@ -130,7 +130,7 @@ export default function ProductPageView({
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1160px] px-12 pt-11 pb-20">
+      <main className="mx-auto max-w-[1160px] px-4 pt-11 pb-20 sm:px-12">
         <div className="mb-[18px] flex items-center gap-2 text-[13px] text-[oklch(0.5_0.02_150)]">
           <Link href="/">Home</Link>
           <span>/</span>

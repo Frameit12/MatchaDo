@@ -78,7 +78,7 @@ export default async function WriteReviewPage({
     <div
       className={`${inter.variable} ${shipporiMincho.variable} min-h-screen text-[oklch(0.24_0.03_150)] font-[family-name:var(--font-inter)]`}
     >
-      <header className="flex items-center justify-between gap-6 border-b border-[oklch(0.9_0.025_140)] bg-[oklch(0.99_0.006_140)] px-12 py-[18px]">
+      <header className="flex flex-col gap-3 border-b border-[oklch(0.9_0.025_140)] bg-[oklch(0.99_0.006_140)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-12 sm:py-[18px]">
         <Link href="/" className="flex shrink-0 items-center gap-2.5 whitespace-nowrap">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[oklch(0.3_0.07_150)]">
             <span className="text-lg leading-none text-[oklch(0.99_0.005_140)] font-[family-name:var(--font-shippori-mincho)]">
@@ -90,7 +90,7 @@ export default async function WriteReviewPage({
           </span>
         </Link>
 
-        <form action="/search" className="relative max-w-[520px] flex-1">
+        <form action="/search" className="relative w-full sm:max-w-[520px] sm:flex-1">
           <input
             type="text"
             name="q"
@@ -100,7 +100,7 @@ export default async function WriteReviewPage({
           <span className="absolute top-1/2 left-3.5 -translate-y-1/2 text-[15px] opacity-55">⌕</span>
         </form>
 
-        <nav className="flex shrink-0 items-center gap-5 whitespace-nowrap">
+        <nav className="flex flex-wrap items-center gap-3 whitespace-nowrap sm:shrink-0 sm:flex-nowrap sm:gap-5">
           <Link
             href="/submit"
             className="rounded-[20px] border-[1.5px] border-[oklch(0.3_0.07_150)] px-4 py-2.5 text-sm font-semibold text-[oklch(0.3_0.07_150)] hover:bg-[oklch(0.3_0.07_150)] hover:text-[oklch(0.99_0.005_140)]"
