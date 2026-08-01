@@ -107,22 +107,24 @@ export default async function Home() {
 
       {/* Hero */}
       <section className="flex flex-col items-center bg-[linear-gradient(oklch(0.96_0.02_140)_0%,oklch(0.98_0.012_95)_100%)] px-6 pt-[88px] pb-[72px] text-center">
-        <div className="mb-3.5 flex flex-wrap items-center justify-center gap-2.5 text-[14px] text-[oklch(0.42_0.02_120)]">
-          <span>
-            <span className="font-semibold text-[oklch(0.24_0.03_140)]">{(matchaCount ?? 0).toLocaleString()}</span>{" "}
-            matcha
-          </span>
-          <span className="inline-block h-1 w-1 rounded-full bg-[oklch(0.72_0.04_140)]" />
-          <span>
-            <span className="font-semibold text-[oklch(0.24_0.03_140)]">{(reviewCount ?? 0).toLocaleString()}</span>{" "}
-            {reviewCount === 1 ? "review" : "reviews"}
-          </span>
-          <span className="inline-block h-1 w-1 rounded-full bg-[oklch(0.72_0.04_140)]" />
-          <span>
-            <span className="font-semibold text-[oklch(0.24_0.03_140)]">{(memberCount ?? 0).toLocaleString()}</span>{" "}
-            {memberCount === 1 ? "member" : "members"}
-          </span>
-        </div>
+        {((memberCount ?? 0) >= 10 || (reviewCount ?? 0) >= 20) && (
+          <div className="mb-3.5 flex flex-wrap items-center justify-center gap-2.5 text-[14px] text-[oklch(0.42_0.02_120)]">
+            <span>
+              <span className="font-semibold text-[oklch(0.24_0.03_140)]">{(matchaCount ?? 0).toLocaleString()}</span>{" "}
+              matcha
+            </span>
+            <span className="inline-block h-1 w-1 rounded-full bg-[oklch(0.72_0.04_140)]" />
+            <span>
+              <span className="font-semibold text-[oklch(0.24_0.03_140)]">{(reviewCount ?? 0).toLocaleString()}</span>{" "}
+              {reviewCount === 1 ? "review" : "reviews"}
+            </span>
+            <span className="inline-block h-1 w-1 rounded-full bg-[oklch(0.72_0.04_140)]" />
+            <span>
+              <span className="font-semibold text-[oklch(0.24_0.03_140)]">{(memberCount ?? 0).toLocaleString()}</span>{" "}
+              {memberCount === 1 ? "member" : "members"}
+            </span>
+          </div>
+        )}
         <span className="mb-[18px] text-[13px] tracking-[2.5px] uppercase text-[oklch(0.48_0.08_145)]">
           A community for matcha lovers
         </span>
