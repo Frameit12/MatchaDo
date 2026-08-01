@@ -2,8 +2,9 @@ import { Inter, Noto_Serif_JP } from "next/font/google";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getApprovedProducts, GRADES, BEST_FOR_TAGS } from "@/lib/products";
+import { getApprovedProducts, GRADES, BEST_FOR_TAGS, SORT_OPTIONS, DEFAULT_SORT, type SortOption } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
+import SortDropdown from "./SortDropdown";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,12 +21,15 @@ const notoSerifJP = Noto_Serif_JP({
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; grade?: string; bestFor?: string }>;
+  searchParams: Promise<{ q?: string; grade?: string; bestFor?: string; sort?: string }>;
 }) {
-  const { q, grade: gradeParam, bestFor: bestForParam } = await searchParams;
+  const { q, grade: gradeParam, bestFor: bestForParam, sort: sortParam } = await searchParams;
   const query = q?.trim() ?? "";
   const grade = (GRADES as readonly string[]).includes(gradeParam ?? "") ? gradeParam : undefined;
   const bestFor = (BEST_FOR_TAGS as readonly string[]).includes(bestForParam ?? "") ? bestForParam : undefined;
+  const sort: SortOption = (SORT_OPTIONS as readonly { value: string }[]).some((o) => o.value === sortParam)
+    ? (sortParam as SortOption)
+    : DEFAULT_SORT;
 
   const supabase = await createClient();
   const {
@@ -35,15 +39,18 @@ export default async function SearchPage({
     ...(query ? { search: query } : {}),
     ...(grade ? { grade } : {}),
     ...(bestFor ? { bestFor } : {}),
+    sort,
   });
 
-  function hrefFor(overrides: { grade?: string | null; bestFor?: string | null }) {
+  function hrefFor(overrides: { grade?: string | null; bestFor?: string | null; sort?: SortOption }) {
     const params = new URLSearchParams();
     const g = overrides.grade === undefined ? grade : overrides.grade;
     const bf = overrides.bestFor === undefined ? bestFor : overrides.bestFor;
+    const s = overrides.sort === undefined ? sort : overrides.sort;
     if (query) params.set("q", query);
     if (g) params.set("grade", g);
     if (bf) params.set("bestFor", bf);
+    if (s && s !== DEFAULT_SORT) params.set("sort", s);
     const qs = params.toString();
     return qs ? `/search?${qs}` : "/search";
   }
@@ -128,30 +135,42 @@ export default async function SearchPage({
           {query ? `Search results for "${query}"` : "All Matcha"}
         </h1>
 
-        <div className="mb-3 flex flex-wrap gap-2.5">
-          <Link
-            href={hrefFor({ grade: null })}
-            className={
-              grade
-                ? "rounded-[20px] border-[1.5px] border-[oklch(0.75_0.04_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.35_0.06_145)]"
-                : "rounded-[20px] border-[1.5px] border-[oklch(0.45_0.09_145)] bg-[oklch(0.45_0.09_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.99_0.005_145)]"
-            }
-          >
-            All
-          </Link>
-          {GRADES.map((g) => (
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap gap-2.5">
             <Link
-              key={g}
-              href={hrefFor({ grade: g })}
+              href={hrefFor({ grade: null })}
               className={
-                grade === g
-                  ? "rounded-[20px] border-[1.5px] border-[oklch(0.45_0.09_145)] bg-[oklch(0.45_0.09_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.99_0.005_145)]"
-                  : "rounded-[20px] border-[1.5px] border-[oklch(0.75_0.04_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.35_0.06_145)]"
+                grade
+                  ? "rounded-[20px] border-[1.5px] border-[oklch(0.75_0.04_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.35_0.06_145)]"
+                  : "rounded-[20px] border-[1.5px] border-[oklch(0.45_0.09_145)] bg-[oklch(0.45_0.09_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.99_0.005_145)]"
               }
             >
-              {g}
+              All
             </Link>
-          ))}
+            {GRADES.map((g) => (
+              <Link
+                key={g}
+                href={hrefFor({ grade: g })}
+                className={
+                  grade === g
+                    ? "rounded-[20px] border-[1.5px] border-[oklch(0.45_0.09_145)] bg-[oklch(0.45_0.09_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.99_0.005_145)]"
+                    : "rounded-[20px] border-[1.5px] border-[oklch(0.75_0.04_145)] px-[18px] py-[7px] text-sm font-semibold text-[oklch(0.35_0.06_145)]"
+                }
+              >
+                {g}
+              </Link>
+            ))}
+          </div>
+
+          <SortDropdown
+            currentLabel={SORT_OPTIONS.find((o) => o.value === sort)?.label ?? "Top Rated"}
+            options={SORT_OPTIONS.map((o) => ({
+              value: o.value,
+              label: o.label,
+              href: hrefFor({ sort: o.value }),
+              active: o.value === sort,
+            }))}
+          />
         </div>
 
         <div className="mb-7 flex flex-wrap gap-2.5">

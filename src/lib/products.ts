@@ -15,11 +15,20 @@ export type ProductWithRating = {
 export const GRADES = ["Ceremonial", "Culinary"] as const;
 export const BEST_FOR_TAGS = ["Usucha", "Latte", "Cooking"] as const;
 
+export const SORT_OPTIONS = [
+  { value: "top_rated", label: "Top Rated" },
+  { value: "most_reviewed", label: "Most Reviewed" },
+  { value: "newest", label: "Newest" },
+] as const;
+export type SortOption = (typeof SORT_OPTIONS)[number]["value"];
+export const DEFAULT_SORT: SortOption = "top_rated";
+
 export async function getApprovedProducts(options?: {
   search?: string;
   grade?: string;
   bestFor?: string;
   limit?: number;
+  sort?: SortOption;
 }): Promise<ProductWithRating[]> {
   const supabase = await createClient();
 
@@ -76,7 +85,7 @@ export async function getApprovedProducts(options?: {
       products.map((p) => p.id)
     );
 
-  return products.map((product) => {
+  const withRatings = products.map((product) => {
     const productReviews = reviews?.filter((r) => r.product_id === product.id) ?? [];
     const reviewCount = productReviews.length;
     const avgRating =
@@ -93,5 +102,25 @@ export async function getApprovedProducts(options?: {
     }
 
     return { ...product, photo_url, avgRating, reviewCount };
+  });
+
+  // Rating/review-count aren't database columns, so this sort has to happen
+  // in JS after the averaging above rather than in the Supabase query. Note
+  // this runs after `limit` was already applied to the SQL query, so pairing
+  // `sort` with `limit` would sort within an already-recency-limited page,
+  // not the true top N -- fine for today's only caller (search, unlimited),
+  // but worth knowing before reusing this with `limit`.
+  // Callers that don't ask for a sort keep the original DB order (newest
+  // first) so existing behavior (e.g. the homepage) is unaffected.
+  if (!options?.sort) return withRatings;
+
+  return [...withRatings].sort((a, b) => {
+    if (options.sort === "most_reviewed") {
+      return b.reviewCount - a.reviewCount || b.avgRating - a.avgRating;
+    }
+    if (options.sort === "newest") {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
+    return b.avgRating - a.avgRating || b.reviewCount - a.reviewCount;
   });
 }
