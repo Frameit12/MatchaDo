@@ -1,7 +1,15 @@
 import { Resend } from "resend";
 
 // Server-only: uses RESEND_API_KEY, never import into client-bundle-reachable code.
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Constructed lazily (not at module load) so a missing key can't crash the
+// build or any page that imports this module -- it just skips sending.
+let resend: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) return null;
+  if (!resend) resend = new Resend(process.env.RESEND_API_KEY);
+  return resend;
+}
 
 const REPORT_REASON_LABELS: Record<string, string> = {
   fake: "Fake review",
@@ -28,10 +36,16 @@ export async function notifyAdminOfPendingSubmission(product: {
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
   if (!adminEmail) return;
 
+  const client = getResendClient();
+  if (!client) {
+    console.error("Cannot send admin notification email: RESEND_API_KEY is not set.");
+    return;
+  }
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://matchado.app";
 
   try {
-    await resend.emails.send({
+    await client.emails.send({
       from: "Matchado <notifications@matchado.app>",
       to: adminEmail,
       subject: `New product pending approval: ${product.brand_name} — ${product.product_name}`,
@@ -58,11 +72,17 @@ export async function notifyAdminOfReportedReview(report: {
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
   if (!adminEmail) return;
 
+  const client = getResendClient();
+  if (!client) {
+    console.error("Cannot send review report notification email: RESEND_API_KEY is not set.");
+    return;
+  }
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://matchado.app";
   const reasonLabel = REPORT_REASON_LABELS[report.reason] ?? report.reason;
 
   try {
-    await resend.emails.send({
+    await client.emails.send({
       from: "Matchado <notifications@matchado.app>",
       to: adminEmail,
       subject: `Review reported (${reasonLabel}): ${report.brandName} — ${report.productName}`,
