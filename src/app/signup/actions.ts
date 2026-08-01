@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { safeRedirectPath } from "@/lib/safeRedirect";
+import { notifyAdminOfNewSignup } from "@/lib/email";
 
 export type SignupFormState = { error: string | null; message: string | null };
 
@@ -33,6 +34,8 @@ export async function signup(
   if (error) {
     return { error: error.message, message: null };
   }
+
+  await notifyAdminOfNewSignup({ username, email });
 
   // If email confirmation is disabled on the project, signUp already
   // returns an active session, so we can go straight in.

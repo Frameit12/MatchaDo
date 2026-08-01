@@ -102,6 +102,31 @@ export async function notifyAdminOfReportedReview(report: {
   }
 }
 
+export async function notifyAdminOfNewSignup(signup: { username: string; email: string }) {
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
+  if (!adminEmail) return;
+
+  const client = getResendClient();
+  if (!client) {
+    console.error("Cannot send new signup notification email: RESEND_API_KEY is not set.");
+    return;
+  }
+
+  try {
+    await client.emails.send({
+      from: "Matchado <notifications@matchado.app>",
+      to: adminEmail,
+      subject: `New signup: ${signup.username}`,
+      html: `
+        <p>A new member joined Matchado.</p>
+        <p><strong>${escapeHtml(signup.username)}</strong> — ${escapeHtml(signup.email)}</p>
+      `,
+    });
+  } catch (error) {
+    console.error("Failed to send new signup notification email:", error);
+  }
+}
+
 function formatReportDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 }
