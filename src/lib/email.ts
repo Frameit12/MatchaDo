@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import type { WeeklyReportStats } from "@/lib/weeklyReport";
 
 // Server-only: uses RESEND_API_KEY, never import into client-bundle-reachable code.
 // Constructed lazily (not at module load) so a missing key can't crash the
@@ -98,5 +99,48 @@ export async function notifyAdminOfReportedReview(report: {
     });
   } catch (error) {
     console.error("Failed to send review report notification email:", error);
+  }
+}
+
+function formatReportDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+export async function sendWeeklyReportEmail(stats: WeeklyReportStats) {
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
+  if (!adminEmail) return;
+
+  const client = getResendClient();
+  if (!client) {
+    console.error("Cannot send weekly report email: RESEND_API_KEY is not set.");
+    return;
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://matchado.app";
+  const rangeLabel = `${formatReportDate(stats.periodStart)} – ${formatReportDate(stats.periodEnd)}`;
+
+  try {
+    await client.emails.send({
+      from: "Matchado <notifications@matchado.app>",
+      to: adminEmail,
+      subject: `Matchado weekly report: ${rangeLabel}`,
+      html: `
+        <p>Here's what happened on Matchado from ${rangeLabel}.</p>
+        <p>
+          <strong>Members:</strong> ${stats.newMembers} new (${stats.totalMembers} total)<br />
+          <strong>Matcha submissions:</strong> ${stats.newSubmissions} new, ${stats.newApproved} approved
+          (${stats.totalProducts} total, ${stats.pendingProducts} awaiting approval)<br />
+          <strong>Reviews:</strong> ${stats.newReviews} new (${stats.totalReviews} total)<br />
+          <strong>Reports filed:</strong> ${stats.newReports}
+        </p>
+        ${
+          stats.pendingProducts > 0
+            ? `<p><a href="${siteUrl}/admin">Review pending submissions →</a></p>`
+            : ""
+        }
+      `,
+    });
+  } catch (error) {
+    console.error("Failed to send weekly report email:", error);
   }
 }
