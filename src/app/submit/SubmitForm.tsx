@@ -58,7 +58,7 @@ export default function SubmitForm() {
 
   useEffect(() => {
     if (state.success) setSubmitted(true);
-  }, [state.success]);
+  }, [state]);
 
   useEffect(() => {
     setConfirmNotDuplicate(false);
