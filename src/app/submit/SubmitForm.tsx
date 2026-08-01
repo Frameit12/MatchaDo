@@ -97,6 +97,14 @@ export default function SubmitForm() {
   }
 
   const blockedByDuplicate = duplicates.length > 0 && !confirmNotDuplicate;
+  const hasReviewContent =
+    overall > 0 ||
+    Object.values(criteria).some((v) => v > 0) ||
+    descriptors.length > 0 ||
+    bestFor.length > 0 ||
+    whatILoved.trim() !== "" ||
+    couldBeBetter.trim() !== "" ||
+    reviewPhotoName !== "";
 
   if (submitted) {
     return (
@@ -108,8 +116,8 @@ export default function SubmitForm() {
           Thank you!
         </h2>
         <p className="max-w-[380px] text-[15px] leading-[1.6] text-[oklch(0.45_0.03_150)]">
-          Your matcha and review have been submitted. It&apos;ll go live for everyone else once an
-          admin approves it, but you can view it right away.
+          Your matcha{hasReviewContent ? " and review have" : " has"} been submitted. It&apos;ll go live for
+          everyone else once an admin approves it, but you can view it right away.
         </p>
         <div className="mt-2.5 flex items-center gap-3">
           {state.productId && (
@@ -311,10 +319,10 @@ export default function SubmitForm() {
 
         <div>
           <h2 className="mb-1.5 text-2xl font-semibold text-[oklch(0.28_0.07_150)] font-[family-name:var(--font-noto-serif-jp)]">
-            Write the First Review
+            Write the First Review <span className="font-normal text-[oklch(0.55_0.02_150)]">(optional)</span>
           </h2>
           <p className="text-sm text-[oklch(0.45_0.03_150)]">
-            Share your honest experience to help fellow matcha drinkers.
+            Share your honest experience to help fellow matcha drinkers, or skip this and add it later.
           </p>
         </div>
 
@@ -509,7 +517,7 @@ export default function SubmitForm() {
           title={blockedByDuplicate ? "Resolve the possible duplicate above before submitting" : undefined}
           className="mt-2 rounded-[10px] bg-[oklch(0.4_0.09_150)] py-[15px] text-base font-semibold text-[oklch(0.98_0.01_145)] transition-colors hover:bg-[oklch(0.35_0.09_150)] disabled:opacity-60"
         >
-          {pending ? "Submitting…" : "Submit Matcha & Review"}
+          {pending ? "Submitting…" : hasReviewContent ? "Submit Matcha & Review" : "Submit Matcha"}
         </button>
       </form>
 

@@ -127,14 +127,34 @@ export async function submitProduct(
   if (!brand_name) fieldErrors.brand_name = "Brand name is required.";
   if (!product_name) fieldErrors.product_name = "Product name is required.";
 
+  const what_i_loved = ((formData.get("what_i_loved") as string) || "").trim() || null;
+  const could_be_better = ((formData.get("could_be_better") as string) || "").trim() || null;
+  const descriptors = formData.getAll("descriptors") as string[];
+  const bestFor = formData.getAll("best_for") as string[];
+  const reviewPhoto = formData.get("review_photo") as File | null;
+  const hasReviewPhoto = !!(reviewPhoto && reviewPhoto.size > 0);
+
+  // The review is optional -- only require complete ratings if the user
+  // actually started one (rated something, wrote something, tagged
+  // something, or attached a photo). Otherwise skip it entirely.
   const ratings: Record<string, number> = {};
-  for (const field of RATING_FIELDS) {
-    const raw = formData.get(field);
-    const num = raw ? Number(raw) : 0;
-    if (!num || num < 1 || num > 5) {
-      fieldErrors[field] = "Please select a rating.";
-    } else {
-      ratings[field] = num;
+  const isLeavingReview =
+    RATING_FIELDS.some((field) => Number(formData.get(field) ?? 0) > 0) ||
+    descriptors.length > 0 ||
+    bestFor.length > 0 ||
+    !!what_i_loved ||
+    !!could_be_better ||
+    hasReviewPhoto;
+
+  if (isLeavingReview) {
+    for (const field of RATING_FIELDS) {
+      const raw = formData.get(field);
+      const num = raw ? Number(raw) : 0;
+      if (!num || num < 1 || num > 5) {
+        fieldErrors[field] = "Please select a rating.";
+      } else {
+        ratings[field] = num;
+      }
     }
   }
 
@@ -198,11 +218,9 @@ export async function submitProduct(
 
   await notifyAdminOfPendingSubmission({ id: productId, brand_name, product_name });
 
-  const what_i_loved = ((formData.get("what_i_loved") as string) || "").trim() || null;
-  const could_be_better = ((formData.get("could_be_better") as string) || "").trim() || null;
-  const descriptors = formData.getAll("descriptors") as string[];
-  const bestFor = formData.getAll("best_for") as string[];
-  const reviewPhoto = formData.get("review_photo") as File | null;
+  if (!isLeavingReview) {
+    return { error: null, fieldErrors: {}, success: true, productId };
+  }
 
   let reviewPhotoUrl: string | null = null;
   if (reviewPhoto && reviewPhoto.size > 0) {
