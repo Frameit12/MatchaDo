@@ -116,8 +116,7 @@ export default function SubmitForm() {
           Thank you!
         </h2>
         <p className="max-w-[380px] text-[15px] leading-[1.6] text-[oklch(0.45_0.03_150)]">
-          Your matcha{hasReviewContent ? " and review have" : " has"} been submitted. It&apos;ll go live for
-          everyone else once an admin approves it, but you can view it right away.
+          {`Your matcha ${hasReviewContent ? "and review have" : "has"} been submitted. It'll go live for everyone else once an admin approves it, but you can view it right away.`}
         </p>
         <div className="mt-2.5 flex items-center gap-3">
           {state.productId && (
@@ -128,13 +127,19 @@ export default function SubmitForm() {
               View your submission
             </Link>
           )}
-          <button
-            onClick={resetForm}
+          <Link
+            href="/"
             className="rounded-[10px] border border-[oklch(0.8_0.03_145)] bg-white px-6 py-3 text-sm font-semibold text-[oklch(0.35_0.06_150)]"
           >
-            Submit another
-          </button>
+            Back to homepage
+          </Link>
         </div>
+        <button
+          onClick={resetForm}
+          className="mt-1 text-sm font-medium text-[oklch(0.5_0.04_150)] hover:underline"
+        >
+          Submit another matcha
+        </button>
       </div>
     );
   }
